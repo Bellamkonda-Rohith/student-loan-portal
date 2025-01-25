@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import loanReducer from './loanSlice';
-import personalProfileSlice from './personalProfileSlice';
+import personalProfileSlice from './PersonalProfileSlice'
 import EducationalProfileSlice from './EducationalProfileSlice';
 import FinancialProfileSlice from './FinancialProfileSlice';
 import DashboardSlice from './DashboardSlice';
