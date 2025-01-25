@@ -15,6 +15,8 @@ function Routing() {
     <Router>
       <Routes>
         <Route path="/" element={<WelcomeScreen />} />
+        <Route path="/WelcomeScreen" element={<WelcomeScreen />} />
+
         <Route path="/LoanTypeSelection" element={<LoanTypeSelection />} />
         <Route path="/GraduationLoanCriteria" element={<GraduationLoanCriteria />} />
         <Route path="/ForeignStudiesCriteria" element={<ForeignStudiesCriteria />} />

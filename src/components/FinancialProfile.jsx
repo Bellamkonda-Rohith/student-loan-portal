@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Typography, Container, Box, TextField, Grid, Select, MenuItem, FormControl, InputLabel, FormHelperText } from '@mui/material';
+import { Button, Typography, Container, Box, TextField, Grid, MenuItem, Select, FormControl, InputLabel, FormHelperText } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setFinancialProfile } from '../Redux/FinancialProfileSlice';
@@ -64,24 +64,41 @@ const FinancialProfile = () => {
         height: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'flex-start',
-        alignItems: 'flex-start',
-        padding: 4,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: { xs: 3, sm: 4 },
+        
       }}
     >
       <Box
         sx={{
           backgroundColor: '#fff',
-          padding: 4,
+          padding: { xs: 3, sm: 4 },
           borderRadius: 3,
-          boxShadow: 3,
+          boxShadow: 5,
           width: '100%',
+          transition: 'box-shadow 0.3s ease',
+          '&:hover': {
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
+          },
         }}
       >
-        <Typography component="h1" variant="h4" gutterBottom color="primary">
+        <Typography
+          component="h1"
+          variant="h4"
+          gutterBottom
+          color="primary"
+          sx={{
+            textAlign: 'center',
+            fontWeight: 600,
+            marginBottom: 3,
+          }}
+        >
           Financial Profile
         </Typography>
+
         <Grid container spacing={3}>
+          {/* Household Income Field */}
           <Grid item xs={12}>
             <TextField
               name="income"
@@ -95,28 +112,42 @@ const FinancialProfile = () => {
               helperText={errors.income}
               sx={{
                 backgroundColor: '#f9f9f9',
-                borderRadius: '4px',
+                borderRadius: '12px',
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '12px',
+                },
+                '& .MuiInputLabel-root': {
+                  fontWeight: 500,
+                },
               }}
             />
           </Grid>
+
+          {/* Employment Status Field */}
           <Grid item xs={12}>
-            <FormControl fullWidth error={!!errors.employment} sx={{ backgroundColor: '#f9f9f9', borderRadius: '4px' }}>
-              <InputLabel id="employment-status-label">Employment Status</InputLabel>
+            <FormControl fullWidth error={!!errors.employment} sx={{ backgroundColor: '#f9f9f9', borderRadius: '12px' }}>
+              <InputLabel id="employment-status-label" sx={{ fontWeight: 500 }}>Employment Status</InputLabel>
               <Select
                 labelId="employment-status-label"
                 name="employment"
                 value={formFinancialData.employment}
                 onChange={handleChange}
                 label="Employment Status"
-                sx={{ textAlign: 'left', '& .MuiSelect-select': { textAlign: 'left' } }}
+                sx={{
+                  textAlign: 'left',
+                  '& .MuiSelect-select': { textAlign: 'left' },
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '12px',
+                  },
+                }}
                 MenuProps={{
                   PaperProps: {
                     sx: {
                       '& .MuiMenuItem-root': {
                         textAlign: 'left',
-                      }
-                    }
-                  }
+                      },
+                    },
+                  },
                 }}
               >
                 <MenuItem value="Student">Student</MenuItem>
@@ -126,6 +157,8 @@ const FinancialProfile = () => {
               {errors.employment && <FormHelperText>{errors.employment}</FormHelperText>}
             </FormControl>
           </Grid>
+
+          {/* Financial Info Field */}
           <Grid item xs={12}>
             <TextField
               name="financialInfo"
@@ -139,11 +172,16 @@ const FinancialProfile = () => {
               helperText={errors.financialInfo}
               sx={{
                 backgroundColor: '#f9f9f9',
-                borderRadius: '4px',
+                borderRadius: '12px',
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '12px',
+                },
               }}
             />
           </Grid>
         </Grid>
+
+        {/* Action Buttons */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', mt: 4 }}>
           <Button
             variant="outlined"
@@ -151,18 +189,25 @@ const FinancialProfile = () => {
             onClick={handleBackClick}
             sx={{
               borderRadius: '20px',
-              padding: '8px 24px',
+              padding: '12px 24px',
+              fontSize: '1rem',
+              transition: '0.3s',
+              '&:hover': { borderColor: '#FF4081', color: '#FF4081' },
             }}
           >
             Back
           </Button>
+
           <Button
             variant="contained"
             color="primary"
             onClick={handleNextClick}
             sx={{
               borderRadius: '20px',
-              padding: '8px 24px',
+              padding: '12px 24px',
+              fontSize: '1rem',
+              transition: '0.3s',
+              '&:hover': { backgroundColor: '#FF4081' },
             }}
           >
             Next

@@ -37,7 +37,7 @@ const DecisionScreen = () => {
   const loanType = useSelector((state) => state.loan.loanType);
 
   const calculateAge = (dob) => {
-    const birthDate = dayjs(dob, 'YYYY-MM-DD');
+    const birthDate = dayjs(dob);
     const today = dayjs();
     let age = today.year() - birthDate.year();
     if (today.month() < birthDate.month() || (today.month() === birthDate.month() && today.date() < birthDate.date())) {
@@ -103,9 +103,10 @@ const DecisionScreen = () => {
   };
 
   const decision = getDecision();
+  const formattedDob = dayjs(Dob).format('MM/DD/YYYY');
 
   return (
-    <Container component="main" maxWidth="lg" className="d-flex flex-column justify-content-center align-items-center vh-100 py-4">
+    <Container component="main" maxWidth="lg" className="d-flex flex-column justify-content-center align-items-center py-4">
       <Box className="bg-white p-4 rounded-3 shadow-lg text-center w-100" style={{ maxWidth: '1200px' }}>
         <Typography component="h1" variant="h4" className="text-primary mb-4">
           Loan Application Decision
@@ -115,18 +116,18 @@ const DecisionScreen = () => {
           Please review your profile details below.
         </Typography>
         <Grid container spacing={2} className="row">
-          <Grid item xs={12} md={4} className="col-12 col-md-4 mb-3">
+          <Grid item xs={12} sm={6} md={4} className="col-12 mb-3">
             <Paper className="p-3 text-left bg-light h-100">
               <Typography variant="h6" gutterBottom>
                 Personal Profile Summary
               </Typography>
               <Typography variant="body1"><strong>Full Name:</strong> {Fullname}</Typography>
-              <Typography variant="body1"><strong>Date of Birth:</strong> {Dob}</Typography>
+              <Typography variant="body1"><strong>Date of Birth:</strong> {formattedDob}</Typography>
               <Typography variant="body1"><strong>Address:</strong> {Address}</Typography>
               <Typography variant="body1"><strong>Contact Information:</strong> {ContactInfo}</Typography>
             </Paper>
           </Grid>
-          <Grid item xs={12} md={4} className="col-12 col-md-4 mb-3">
+          <Grid item xs={12} sm={6} md={4} className="col-12 mb-3">
             <Paper className="p-3 text-left bg-light h-100">
               <Typography variant="h6" gutterBottom>
                 Educational Profile Summary
@@ -137,7 +138,7 @@ const DecisionScreen = () => {
               <Typography variant="body1"><strong>GPA/Percentage:</strong> {gpa}</Typography>
             </Paper>
           </Grid>
-          <Grid item xs={12} md={4} className="col-12 col-md-4 mb-3">
+          <Grid item xs={12} sm={6} md={4} className="col-12 mb-3">
             <Paper className="p-3 text-left bg-light h-100">
               <Typography variant="h6" gutterBottom>
                 Financial Profile Summary
@@ -154,10 +155,10 @@ const DecisionScreen = () => {
           </Typography>
         </Paper>
         <Box className="d-flex justify-content-between w-100 mt-4">
-          <Button variant="outlined" color="secondary" onClick={handleBackClick} sx={{ borderRadius: '20px', px: 4 }}>
+          <Button variant="outlined" color="secondary" onClick={handleBackClick} sx={{ borderRadius: '20px', px: 4, width: { xs: '100%', sm: 'auto' } }}>
             Back
           </Button>
-          <Button variant="contained" color="primary" onClick={handleSubmitClick} sx={{ borderRadius: '20px', px: 4 }}>
+          <Button variant="contained" color="primary" onClick={handleSubmitClick} sx={{ borderRadius: '20px', px: 4, width: { xs: '100%', sm: 'auto' } }}>
             Submit
           </Button>
         </Box>

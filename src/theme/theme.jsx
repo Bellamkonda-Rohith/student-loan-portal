@@ -12,7 +12,7 @@ const theme = createTheme({
       main: '#03dac6', // Complementary turquoise color
     },
     background: {
-      default: 'black', // Light background color
+      default: '#E0F7FA', // Light background color
     },
   },
   typography: {

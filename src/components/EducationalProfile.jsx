@@ -21,7 +21,7 @@ const EducationalProfile = () => {
     const { name, value } = e.target;
     setFormEducationalData((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -71,23 +71,30 @@ const EducationalProfile = () => {
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 4,
+        padding: { xs: 3, sm: 4 },
+      // Subtle background color
       }}
     >
       <Box
         sx={{
           backgroundColor: '#fff',
-          padding: 4,
+          padding: { xs: 3, sm: 4 },
           borderRadius: 3,
-          boxShadow: 3,
+          boxShadow: 4,
           textAlign: 'center',
           width: '100%',
+          transition: 'all 0.3s ease',
+          '&:hover': {
+            boxShadow: 20,
+          },
         }}
       >
         <Typography component="h1" variant="h4" gutterBottom color="primary">
           Educational Profile
         </Typography>
-        <Grid container spacing={2}>
+        
+        <Grid container spacing={3}>
+          {/* Qualification */}
           <Grid item xs={12}>
             <FormControl fullWidth error={!!errors.qualification}>
               <InputLabel>Highest Qualification</InputLabel>
@@ -96,15 +103,20 @@ const EducationalProfile = () => {
                 value={formEducationalData.qualification}
                 onChange={handleChange}
                 label="Highest Qualification"
-                sx={{ textAlign: 'left' }}
+                sx={{
+                  textAlign: 'left',
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '12px',
+                  },
+                }}
                 MenuProps={{
                   PaperProps: {
                     sx: {
                       '& .MuiMenuItem-root': {
                         textAlign: 'left',
-                      }
-                    }
-                  }
+                      },
+                    },
+                  },
                 }}
               >
                 <MenuItem value="Bachelors">Bachelors</MenuItem>
@@ -114,6 +126,8 @@ const EducationalProfile = () => {
               {errors.qualification && <FormHelperText>{errors.qualification}</FormHelperText>}
             </FormControl>
           </Grid>
+
+          {/* Institution Name */}
           <Grid item xs={12}>
             <TextField
               name="institution"
@@ -125,8 +139,15 @@ const EducationalProfile = () => {
               onChange={handleChange}
               error={!!errors.institution}
               helperText={errors.institution}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '12px',
+                },
+              }}
             />
           </Grid>
+
+          {/* Graduation Year */}
           <Grid item xs={12}>
             <TextField
               name="graduationYear"
@@ -140,8 +161,15 @@ const EducationalProfile = () => {
               InputLabelProps={{ shrink: true }}
               error={!!errors.graduationYear}
               helperText={errors.graduationYear}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '12px',
+                },
+              }}
             />
           </Grid>
+
+          {/* GPA/Percentage */}
           <Grid item xs={12}>
             <TextField
               name="gpa"
@@ -153,21 +181,44 @@ const EducationalProfile = () => {
               onChange={handleChange}
               error={!!errors.gpa}
               helperText={errors.gpa}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '12px',
+                },
+              }}
             />
           </Grid>
         </Grid>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', mt: 3 }}>
+
+        {/* Buttons */}
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', mt: 4 }}>
           <Button
             variant="outlined"
             color="secondary"
             onClick={handleBackClick}
+            sx={{
+              width: '100%',
+              padding: '12px',
+              fontSize: '1.1rem',
+              borderRadius: '30px',
+              marginBottom: 2,
+              '&:hover': { borderColor: '#FF4081', color: '#FF4081' },
+            }}
           >
             Back
           </Button>
+
           <Button
             variant="contained"
             color="primary"
             onClick={handleNextClick}
+            sx={{
+              width: '100%',
+              padding: '12px',
+              fontSize: '1.1rem',
+              borderRadius: '30px',
+              '&:hover': { backgroundColor: '#FF4081' },
+            }}
           >
             Next
           </Button>

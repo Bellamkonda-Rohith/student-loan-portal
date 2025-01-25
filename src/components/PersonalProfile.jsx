@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button, Typography, Container, Box, TextField, Grid } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setLoanType } from '../Redux/loanSlice';
@@ -15,7 +15,7 @@ const PersonalProfile = () => {
 
   const [formPersonalData, setFormPersonalData] = useState({
     Fullname: "",
-    Dob: "",
+    Dob: null,
     Address: "",
     ContactInfo: "",
   });
@@ -31,6 +31,13 @@ const PersonalProfile = () => {
     setFormPersonalData((prevState) => ({
       ...prevState,
       [name]: value,
+    }));
+  };
+
+  const handleDateChange = (date) => {
+    setFormPersonalData((prevState) => ({
+      ...prevState,
+      Dob: date,
     }));
   };
 
@@ -83,23 +90,29 @@ const PersonalProfile = () => {
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          padding: 4,
+          padding: { xs: 3, sm: 4 },
+          
         }}
       >
         <Box
           sx={{
             backgroundColor: '#fff',
-            padding: 4,
+            padding: { xs: 3, sm: 4 },
             borderRadius: 3,
-            boxShadow: 3,
+            boxShadow: 5,
             textAlign: 'center',
             width: '100%',
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              boxShadow: 20,
+            },
           }}
         >
           <Typography component="h1" variant="h4" gutterBottom color="primary">
             Personal Profile
           </Typography>
-          <Grid container spacing={2}>
+          
+          <Grid container spacing={3}>
             <Grid item xs={12}>
               <TextField
                 name="Fullname"
@@ -111,23 +124,42 @@ const PersonalProfile = () => {
                 onChange={handleChange}
                 error={!!errors.Fullname}
                 helperText={errors.Fullname}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '10px',
+                  },
+                  '& .MuiFormLabel-root': {
+                    fontSize: '1rem',
+                  },
+                }}
               />
             </Grid>
+
             <Grid item xs={12}>
-              <TextField
-                name="Dob"
+              <DatePicker
+                sx={{
+                  width: '100%',
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '10px',
+                  },
+                }}
                 label="Date of Birth"
-                placeholder="Select your date of birth"
-                variant="outlined"
-                fullWidth
+                inputFormat="MM/DD/YYYY"
                 value={formPersonalData.Dob}
-                onChange={handleChange}
-                type="date"
-                InputLabelProps={{ shrink: true }}
-                error={!!errors.Dob}
-                helperText={errors.Dob}
+                onChange={handleDateChange}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    name="Dob"
+                    variant="outlined"
+                    fullWidth
+                    error={!!errors.Dob}
+                    helperText={errors.Dob}
+                  />
+                )}
               />
             </Grid>
+
             <Grid item xs={12}>
               <TextField
                 name="Address"
@@ -139,8 +171,17 @@ const PersonalProfile = () => {
                 onChange={handleChange}
                 error={!!errors.Address}
                 helperText={errors.Address}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '10px',
+                  },
+                  '& .MuiFormLabel-root': {
+                    fontSize: '1rem',
+                  },
+                }}
               />
             </Grid>
+
             <Grid item xs={12}>
               <TextField
                 name="ContactInfo"
@@ -152,21 +193,56 @@ const PersonalProfile = () => {
                 onChange={handleChange}
                 error={!!errors.ContactInfo}
                 helperText={errors.ContactInfo}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '10px',
+                  },
+                  '& .MuiFormLabel-root': {
+                    fontSize: '1rem',
+                  },
+                }}
               />
             </Grid>
           </Grid>
+
           <Box
             sx={{
               display: 'flex',
-              justifyContent: 'space-between',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
               width: '100%',
               mt: 3,
             }}
           >
-            <Button variant="outlined" color="secondary" onClick={handleBackClick}>
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={handleBackClick}
+              sx={{
+                width: '100%',
+                padding: '12px',
+                fontSize: '1.1rem',
+                borderRadius: '30px',
+                marginBottom: 2,
+                '&:hover': { borderColor: '#FF4081', color: '#FF4081' },
+              }}
+            >
               Back
             </Button>
-            <Button variant="contained" color="primary" onClick={handleNextClick}>
+
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleNextClick}
+              sx={{
+                width: '100%',
+                padding: '12px',
+                fontSize: '1.1rem',
+                borderRadius: '30px',
+                '&:hover': { backgroundColor: '#FF4081' },
+              }}
+            >
               Next
             </Button>
           </Box>

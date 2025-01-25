@@ -22,58 +22,124 @@ const GraduationLoanCriteria = () => {
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 4,
+        padding: { xs: 3, sm: 4 },
+        
       }}
     >
       <Box
         sx={{
           backgroundColor: '#fff',
-          padding: 4,
-          borderRadius: 3,
+          padding: { xs: 3, sm: 4 },
+          borderRadius: '16px',
           boxShadow: 3,
           textAlign: 'center',
           width: '100%',
+          maxWidth: '600px',  // Ensuring it doesn't get too wide on larger screens
         }}
       >
-        <Typography component="h1" variant="h4" gutterBottom color="primary">
+        <Typography
+          component="h1"
+          variant="h4"
+          gutterBottom
+          sx={{ fontWeight: 'bold', color: '#00B8D4', fontSize: { xs: '1.75rem', sm: '2rem' } }}
+        >
           Graduation Loans
         </Typography>
-        <Typography component="p" variant="body1" gutterBottom>
+        <Typography
+          component="p"
+          variant="body1"
+          gutterBottom
+          sx={{ fontSize: { xs: '1rem', sm: '1.2rem' }, color: '#333', lineHeight: 1.6 }}
+        >
           Eligibility Criteria:
         </Typography>
-        <Grid container spacing={2}>
+
+        {/* Grid for criteria stacked vertically */}
+        <Grid container spacing={3} sx={{ marginTop: 2 }}>
+          {/* Education */}
           <Grid item xs={12}>
             <Paper
               sx={{
-                padding: 2,
-                textAlign: 'left',
-                backgroundColor: '#f0f0f0',
+                padding: { xs: 2, sm: 3 },
+                backgroundColor: '#f9f9f9',
+                borderRadius: '8px',
+                boxShadow: 1,
+                display: 'flex',
+                alignItems: 'center',
               }}
             >
-              <Typography variant="body1" gutterBottom>
-                <strong>Education:</strong> Bachelor`s Degree
+              <Typography variant="body1" sx={{ fontSize: { xs: '0.9rem', sm: '1rem' }, fontWeight: '500' }}>
+                <strong>Education:</strong> Bachelor’s Degree
               </Typography>
-              <Typography variant="body1" gutterBottom>
+            </Paper>
+          </Grid>
+
+          {/* Age */}
+          <Grid item xs={12}>
+            <Paper
+              sx={{
+                padding: { xs: 2, sm: 3 },
+                backgroundColor: '#f9f9f9',
+                borderRadius: '8px',
+                boxShadow: 1,
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              <Typography variant="body1" sx={{ fontSize: { xs: '0.9rem', sm: '1rem' }, fontWeight: '500' }}>
                 <strong>Age:</strong> 18-30
               </Typography>
-              <Typography variant="body1">
+            </Paper>
+          </Grid>
+
+          {/* Household Income */}
+          <Grid item xs={12}>
+            <Paper
+              sx={{
+                padding: { xs: 2, sm: 3 },
+                backgroundColor: '#f9f9f9',
+                borderRadius: '8px',
+                boxShadow: 1,
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              <Typography variant="body1" sx={{ fontSize: { xs: '0.9rem', sm: '1rem' }, fontWeight: '500' }}>
                 <strong>Household Income:</strong> Up to $50,000
               </Typography>
             </Paper>
           </Grid>
         </Grid>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', mt: 3 }}>
+
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', mt: 3 }}>
           <Button
             variant="outlined"
             color="secondary"
-            onClick={handleBack} 
+            onClick={handleBack}
+            sx={{
+              width: '100%',
+              padding: { xs: '12px', sm: '10px 20px' },
+              fontSize: { xs: '1rem', sm: '1.2rem' },
+              borderRadius: '30px',
+              marginBottom: 2,
+              '&:hover': { borderColor: '#FF4081', color: '#FF4081' },
+            }}
           >
             Back
           </Button>
+
           <Button
             variant="contained"
             color="primary"
-            onClick={handleNext} 
+            onClick={handleNext}
+            sx={{
+              width: '100%',
+              padding: { xs: '12px', sm: '10px 20px' },
+              fontSize: { xs: '1rem', sm: '1.2rem' },
+              borderRadius: '30px',
+              '&:hover': { backgroundColor: '#FF4081' },
+              disabled: { backgroundColor: '#ccc' },
+            }}
           >
             Next
           </Button>
