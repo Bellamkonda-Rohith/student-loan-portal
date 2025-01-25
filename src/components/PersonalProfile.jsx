@@ -4,8 +4,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { setLoanType } from '../redux/loanSlice';
-import { setpersonalProfile } from '../redux/PersonalProfileSlice';
+import { setLoanType } from '../Redux/loanSlice';
+import { setpersonalProfile } from '../Redux/PersonalProfileSlice';
 
 const PersonalProfile = () => {
   const navigate = useNavigate();
