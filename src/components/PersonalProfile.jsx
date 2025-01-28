@@ -6,25 +6,34 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setLoanType } from '../Redux/loanSlice';
 import { setpersonalProfile } from '../Redux/PersonalProfileSlice';
+import { motion } from 'framer-motion';
 
 const PersonalProfile = () => {
   const navigate = useNavigate();
   const { loanType } = useParams();
   const dispatch = useDispatch();
   const selectedLoanType = useSelector((state) => state.loan.loanType);
+  const storedProfileData = useSelector((state) => state.Personalformdata);
 
   const [formPersonalData, setFormPersonalData] = useState({
-    Fullname: "",
-    Dob: null,
-    Address: "",
-    ContactInfo: "",
+    Fullname: storedProfileData.Fullname || "",
+    Dob: storedProfileData.Dob || null,
+    Address: storedProfileData.Address || "",
+    ContactInfo: storedProfileData.ContactInfo || "",
   });
 
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
     dispatch(setLoanType(loanType));
-  }, [loanType, dispatch]);
+    // Prepopulate form with stored data if available
+    setFormPersonalData({
+      Fullname: storedProfileData.Fullname || "",
+      Dob: storedProfileData.Dob || null,
+      Address: storedProfileData.Address || "",
+      ContactInfo: storedProfileData.ContactInfo || "",
+    });
+  }, [loanType, dispatch, storedProfileData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -43,9 +52,12 @@ const PersonalProfile = () => {
 
   const validate = () => {
     const newErrors = {};
+    const namePattern = /^[A-Za-z\s]+$/;
 
     if (!formPersonalData.Fullname) {
       newErrors.Fullname = "Full Name is required";
+    } else if (!namePattern.test(formPersonalData.Fullname)) {
+      newErrors.Fullname = "Full Name should contain only alphabetic characters";
     }
     if (!formPersonalData.Dob) {
       newErrors.Dob = "Date of Birth is required";
@@ -83,170 +95,191 @@ const PersonalProfile = () => {
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Container
         component="main"
-        maxWidth="sm"
+        maxWidth="false"
+        disableGutters
         sx={{
-          height: '100vh',
+          width: 'calc(100%)',
+         
+          background: 'linear-gradient(135deg, #0f172a, #1e293b)',
+          padding: { xs: 3, sm: 4 },
           display: 'flex',
-          flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          padding: { xs: 3, sm: 4 },
-          
+          minHeight: '100vh',
         }}
       >
-        <Box
-          sx={{
-            backgroundColor: '#fff',
-            padding: { xs: 3, sm: 4 },
-            borderRadius: 3,
-            boxShadow: 5,
-            textAlign: 'center',
-            width: '100%',
-            transition: 'all 0.3s ease',
-            '&:hover': {
-              boxShadow: 20,
-            },
-          }}
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
         >
-          <Typography component="h1" variant="h4" gutterBottom color="primary">
-            Personal Profile
-          </Typography>
-          
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <TextField
-                name="Fullname"
-                label="Full Name"
-                placeholder="Enter your full name"
-                variant="outlined"
-                fullWidth
-                value={formPersonalData.Fullname}
-                onChange={handleChange}
-                error={!!errors.Fullname}
-                helperText={errors.Fullname}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: '10px',
-                  },
-                  '& .MuiFormLabel-root': {
-                    fontSize: '1rem',
-                  },
-                }}
-              />
-            </Grid>
-
-            <Grid item xs={12}>
-              <DatePicker
-                sx={{
-                  width: '100%',
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: '10px',
-                  },
-                }}
-                label="Date of Birth"
-                inputFormat="MM/DD/YYYY"
-                value={formPersonalData.Dob}
-                onChange={handleDateChange}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    name="Dob"
-                    variant="outlined"
-                    fullWidth
-                    error={!!errors.Dob}
-                    helperText={errors.Dob}
-                  />
-                )}
-              />
-            </Grid>
-
-            <Grid item xs={12}>
-              <TextField
-                name="Address"
-                label="Address"
-                placeholder="Enter your complete address"
-                variant="outlined"
-                fullWidth
-                value={formPersonalData.Address}
-                onChange={handleChange}
-                error={!!errors.Address}
-                helperText={errors.Address}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: '10px',
-                  },
-                  '& .MuiFormLabel-root': {
-                    fontSize: '1rem',
-                  },
-                }}
-              />
-            </Grid>
-
-            <Grid item xs={12}>
-              <TextField
-                name="ContactInfo"
-                label="Contact Information"
-                placeholder="Enter your phone number or email"
-                variant="outlined"
-                fullWidth
-                value={formPersonalData.ContactInfo}
-                onChange={handleChange}
-                error={!!errors.ContactInfo}
-                helperText={errors.ContactInfo}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: '10px',
-                  },
-                  '& .MuiFormLabel-root': {
-                    fontSize: '1rem',
-                  },
-                }}
-              />
-            </Grid>
-          </Grid>
-
           <Box
             sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
+              backgroundColor: 'rgba(255, 255, 255, 0.03)',
+              backdropFilter: 'blur(16px)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              padding: { xs: 4, sm: 6 },
+              borderRadius: 4,
+              boxShadow: '0 24px 48px rgba(0, 0, 0, 0.2)',
+              textAlign: 'center',
               width: '100%',
-              mt: 3,
+              maxWidth: '600px',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                boxShadow: '0 32px 64px rgba(0, 0, 0, 0.3)',
+              },
             }}
           >
-            <Button
-              variant="outlined"
-              color="secondary"
-              onClick={handleBackClick}
+            <Typography
+              component="h1"
+              variant="h3"
+              gutterBottom
               sx={{
-                width: '100%',
-                padding: '12px',
-                fontSize: '1.1rem',
-                borderRadius: '30px',
-                marginBottom: 2,
-                '&:hover': { borderColor: '#FF4081', color: '#FF4081' },
+                fontWeight: 800,
+                background: 'linear-gradient(45deg, #38bdf8, #818cf8)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                lineHeight: 1.2,
               }}
             >
-              Back
-            </Button>
+              Personal Profile
+            </Typography>
 
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleNextClick}
+            <Grid container spacing={4}>
+              <Grid item xs={12}>
+                <TextField
+                  name="Fullname"
+                  label="Full Name"
+                  placeholder="Enter your full name"
+                  variant="outlined"
+                  fullWidth
+                  value={formPersonalData.Fullname}
+                  onChange={handleChange}
+                  error={!!errors.Fullname}
+                  helperText={errors.Fullname}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: '10px',
+                    },
+                  }}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <DatePicker
+                  sx={{
+                    width: '100%',
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: '10px',
+                    },
+                  }}
+                  label="Date of Birth"
+                  inputFormat="MM/DD/YYYY"
+                  value={formPersonalData.Dob}
+                  onChange={handleDateChange}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      name="Dob"
+                      variant="outlined"
+                      fullWidth
+                      error={!!errors.Dob}
+                      helperText={errors.Dob}
+                    />
+                  )}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextField
+                  name="Address"
+                  label="Address"
+                  placeholder="Enter your complete address"
+                  variant="outlined"
+                  fullWidth
+                  value={formPersonalData.Address}
+                  onChange={handleChange}
+                  error={!!errors.Address}
+                  helperText={errors.Address}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: '10px',
+                    },
+                  }}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextField
+                  name="ContactInfo"
+                  label="Contact Information"
+                  placeholder="Enter your phone number or email"
+                  variant="outlined"
+                  fullWidth
+                  value={formPersonalData.ContactInfo}
+                  onChange={handleChange}
+                  error={!!errors.ContactInfo}
+                  helperText={errors.ContactInfo}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: '10px',
+                    },
+                  }}
+                />
+              </Grid>
+            </Grid>
+
+            <Box
               sx={{
+                display: 'flex',
+                flexDirection: { xs: 'column', sm: 'row' },
+                alignItems: 'center',
+                justifyContent: 'space-between',
                 width: '100%',
-                padding: '12px',
-                fontSize: '1.1rem',
-                borderRadius: '30px',
-                '&:hover': { backgroundColor: '#FF4081' },
+                mt: 4,
               }}
             >
-              Next
-            </Button>
+              <Button
+                variant="outlined"
+                onClick={handleBackClick}
+                sx={{
+                  width: { xs: '100%', sm: '48%' },
+                  padding: '12px',
+                  fontSize: '1.1rem',
+                  borderRadius: '30px',
+                  marginBottom: { xs: 2, sm: 0 },
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  color: 'rgba(255, 255, 255, 0.85)',
+                  '&:hover': {
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
+                  },
+                }}
+              >
+                Back
+              </Button>
+
+              <Button
+                variant="contained"
+                onClick={handleNextClick}
+                sx={{
+                  width: { xs: '100%', sm: '48%' },
+                  padding: '12px',
+                  fontSize: '1.1rem',
+                  borderRadius: '30px',
+                  background: 'linear-gradient(45deg, #4f46e5, #6366f1)',
+                  color: '#fff',
+                  '&:hover': {
+                    boxShadow: '0 8px 24px rgba(79, 70, 229, 0.4)',
+                  },
+                }}
+              >
+                Next
+              </Button>
+            </Box>
           </Box>
-        </Box>
+        </motion.div>
       </Container>
     </LocalizationProvider>
   );

@@ -15,31 +15,32 @@ const RDLoanCriteria = () => {
   return (
     <Container
       component="main"
-      maxWidth="sm"
+      maxWidth="false"
+      disableGutters
       sx={{
-        height: '100vh',
+        minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: { xs: 3, sm: 4 },
-        
+        padding: { xs: 2, sm: 4 },
+        background: 'linear-gradient(135deg, #00B8D4, #FF4081)',
       }}
     >
       <Box
         sx={{
-          backgroundColor: '#fff',
+          backgroundColor: 'rgba(255, 255, 255, 0.9)',
           padding: { xs: 3, sm: 4 },
           borderRadius: '16px',
-          boxShadow: 3,
+          boxShadow: 4,
           textAlign: 'center',
           width: '100%',
-          maxWidth: '600px',  // Ensuring it doesn't get too wide on larger screens
+          maxWidth: '600px',
         }}
       >
         <Typography
           component="h1"
-          variant="h4"
+          variant="h3"
           gutterBottom
           sx={{ fontWeight: 'bold', color: '#00B8D4', fontSize: { xs: '1.75rem', sm: '2rem' } }}
         >
@@ -54,36 +55,29 @@ const RDLoanCriteria = () => {
           Eligibility Criteria:
         </Typography>
 
-        {/* Criteria displayed vertically */}
         <Grid container spacing={3} sx={{ marginTop: 2 }}>
-          {/* Education */}
           <Grid item xs={12}>
             <Paper
               sx={{
                 padding: { xs: 2, sm: 3 },
                 backgroundColor: '#f9f9f9',
-                borderRadius: '8px',
-                boxShadow: 1,
-                display: 'flex',
-                alignItems: 'center',
+                borderRadius: '12px',
+                boxShadow: 2,
               }}
             >
               <Typography variant="body1" sx={{ fontSize: { xs: '0.9rem', sm: '1rem' }, fontWeight: '500' }}>
-                <strong>Education:</strong> Master's Degree
+                <strong>Education:</strong> Master’s Degree
               </Typography>
             </Paper>
           </Grid>
 
-          {/* Age */}
           <Grid item xs={12}>
             <Paper
               sx={{
                 padding: { xs: 2, sm: 3 },
                 backgroundColor: '#f9f9f9',
-                borderRadius: '8px',
-                boxShadow: 1,
-                display: 'flex',
-                alignItems: 'center',
+                borderRadius: '12px',
+                boxShadow: 2,
               }}
             >
               <Typography variant="body1" sx={{ fontSize: { xs: '0.9rem', sm: '1rem' }, fontWeight: '500' }}>
@@ -92,16 +86,13 @@ const RDLoanCriteria = () => {
             </Paper>
           </Grid>
 
-          {/* Household Income */}
           <Grid item xs={12}>
             <Paper
               sx={{
                 padding: { xs: 2, sm: 3 },
                 backgroundColor: '#f9f9f9',
-                borderRadius: '8px',
-                boxShadow: 1,
-                display: 'flex',
-                alignItems: 'center',
+                borderRadius: '12px',
+                boxShadow: 2,
               }}
             >
               <Typography variant="body1" sx={{ fontSize: { xs: '0.9rem', sm: '1rem' }, fontWeight: '500' }}>
@@ -111,18 +102,15 @@ const RDLoanCriteria = () => {
           </Grid>
         </Grid>
 
-        {/* Buttons at the bottom */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', mt: 3 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 3 }}>
           <Button
             variant="outlined"
             color="secondary"
             onClick={handleBack}
             sx={{
-              width: '100%',
               padding: { xs: '12px', sm: '10px 20px' },
               fontSize: { xs: '1rem', sm: '1.2rem' },
-              borderRadius: '30px',
-              marginBottom: 2,
+              borderRadius: '50px',
               '&:hover': { borderColor: '#FF4081', color: '#FF4081' },
             }}
           >
@@ -134,12 +122,10 @@ const RDLoanCriteria = () => {
             color="primary"
             onClick={handleNext}
             sx={{
-              width: '100%',
               padding: { xs: '12px', sm: '10px 20px' },
               fontSize: { xs: '1rem', sm: '1.2rem' },
-              borderRadius: '30px',
+              borderRadius: '50px',
               '&:hover': { backgroundColor: '#FF4081' },
-              disabled: { backgroundColor: '#ccc' },
             }}
           >
             Next

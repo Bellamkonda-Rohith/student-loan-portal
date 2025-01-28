@@ -1,17 +1,31 @@
-import { Button, Typography, Container, Box, Grid, Paper, Divider } from '@mui/material';
+import {
+  Button,
+  Typography,
+  Container,
+  Box,
+  Grid,
+  Card,
+  CardContent,
+  useTheme,
+  useMediaQuery,
+ 
+} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   incrementTotalApplications,
   incrementQualifiedApplications,
   incrementNotQualifiedApplications,
-  addDisqualificationReason
+  addDisqualificationReason,
 } from '../Redux/DashboardSlice';
 import dayjs from 'dayjs';
+import { motion } from 'framer-motion';
 
 const DecisionScreen = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const handleBackClick = () => {
     navigate('/FinancialProfile');
@@ -24,7 +38,7 @@ const DecisionScreen = () => {
       dispatch(incrementQualifiedApplications());
     } else {
       dispatch(incrementNotQualifiedApplications());
-      decisionResult.reasons.forEach(reason => {
+      decisionResult.reasons.forEach((reason) => {
         dispatch(addDisqualificationReason(reason));
       });
     }
@@ -40,7 +54,10 @@ const DecisionScreen = () => {
     const birthDate = dayjs(dob);
     const today = dayjs();
     let age = today.year() - birthDate.year();
-    if (today.month() < birthDate.month() || (today.month() === birthDate.month() && today.date() < birthDate.date())) {
+    if (
+      today.month() < birthDate.month() ||
+      (today.month() === birthDate.month() && today.date() < birthDate.date())
+    ) {
       age--;
     }
     return age;
@@ -58,7 +75,23 @@ const DecisionScreen = () => {
 
     let reasons = [];
 
-    if (loanType === 'graduation' && !(['Bachelors', 'Masters', 'PhD'].includes(qualification))) {
+    if (
+      !income ||
+      !employment ||
+      !financialInfo ||
+      !Fullname ||
+      !Dob ||
+      !Address ||
+      !ContactInfo ||
+      !qualification ||
+      !institution ||
+      !graduationYear ||
+      !gpa
+    ) {
+      reasons.push('All fields are required.');
+    }
+
+    if (loanType === 'graduation' && !['Bachelors', 'Masters', 'PhD'].includes(qualification)) {
       reasons.push('Qualification does not meet the requirements.');
     }
     if (loanType === 'graduation' && incomeValue < 50000) {
@@ -70,7 +103,7 @@ const DecisionScreen = () => {
     if (loanType === 'graduation' && gpaValue < 80) {
       reasons.push('GPA is below 80%.');
     }
-    if (loanType === 'foreign' && !(['Bachelors', 'Masters', 'PhD'].includes(qualification))) {
+    if (loanType === 'foreign' && !['Bachelors', 'Masters', 'PhD'].includes(qualification)) {
       reasons.push('Qualification does not meet the requirements.');
     }
     if (loanType === 'foreign' && incomeValue < 75000) {
@@ -82,7 +115,7 @@ const DecisionScreen = () => {
     if (loanType === 'foreign' && gpaValue < 80) {
       reasons.push('GPA is below 80%.');
     }
-    if (loanType === 'rd' && !(['Masters', 'PhD'].includes(qualification))) {
+    if (loanType === 'rd' && !['Masters', 'PhD'].includes(qualification)) {
       reasons.push('Qualification does not meet the requirements.');
     }
     if (loanType === 'rd' && incomeValue < 100000) {
@@ -105,64 +138,282 @@ const DecisionScreen = () => {
   const decision = getDecision();
   const formattedDob = dayjs(Dob).format('MM/DD/YYYY');
 
+  const containerVariants = {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: { opacity: 1, scale: 1, transition: { duration: 0.6 } },
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+  };
+
   return (
-    <Container component="main" maxWidth="lg" className="d-flex flex-column justify-content-center align-items-center py-4">
-      <Box className="bg-white p-4 rounded-3 shadow-lg text-center w-100" style={{ maxWidth: '1200px' }}>
-        <Typography component="h1" variant="h4" className="text-primary mb-4">
+    <Container
+      component="main"
+      maxWidth={false}
+      disableGutters
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+        padding: 4,
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+        style={{
+          width: '100%',
+          maxWidth: '1200px',
+          padding: '16px',
+          borderRadius: '16px',
+          backgroundColor: 'rgba(255, 255, 255, 0.03)',
+          backdropFilter: 'blur(16px)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          boxShadow: '0 24px 48px rgba(0, 0, 0, 0.2)',
+          textAlign: 'center',
+        }}
+      >
+        <Typography
+          component="h1"
+          variant={isMobile ? 'h4' : 'h2'}
+          sx={{
+            fontWeight: 800,
+            mb: 3,
+            background: 'linear-gradient(45deg, #38bdf8 0%, #818cf8 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            lineHeight: 1.2,
+          }}
+        >
           Loan Application Decision
         </Typography>
-        <Divider variant="middle" />
-        <Typography component="p" variant="h6" className="mb-4 mt-4">
+        <Typography
+          component="p"
+          variant="body1"
+          sx={{
+            color: 'rgba(255, 255, 255, 0.85)',
+            fontSize: isMobile ? '1rem' : '1.1rem',
+            mb: 4,
+            lineHeight: 1.7,
+          }}
+        >
           Please review your profile details below.
         </Typography>
-        <Grid container spacing={2} className="row">
-          <Grid item xs={12} sm={6} md={4} className="col-12 mb-3">
-            <Paper className="p-3 text-left bg-light h-100">
-              <Typography variant="h6" gutterBottom>
-                Personal Profile Summary
-              </Typography>
-              <Typography variant="body1"><strong>Full Name:</strong> {Fullname}</Typography>
-              <Typography variant="body1"><strong>Date of Birth:</strong> {formattedDob}</Typography>
-              <Typography variant="body1"><strong>Address:</strong> {Address}</Typography>
-              <Typography variant="body1"><strong>Contact Information:</strong> {ContactInfo}</Typography>
-            </Paper>
+        <Grid container spacing={4} justifyContent="center">
+          <Grid item xs={12} sm={6} md={4}>
+            <motion.div variants={cardVariants} initial="hidden" animate="visible">
+              <Card
+                sx={{
+                  height: '100%',
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  backdropFilter: 'blur(16px)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '16px',
+                  boxShadow: '0 12px 24px rgba(0, 0, 0, 0.2)',
+                  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                  '&:hover': {
+                    transform: 'scale(1.05)',
+                    boxShadow: '0 16px 32px rgba(0, 0, 0, 0.3)',
+                  },
+                }}
+              >
+                <CardContent>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontWeight: 'bold',
+                      background: 'linear-gradient(45deg, #38bdf8 0%, #818cf8 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      mb: 1,
+                    }}
+                  >
+                    Personal Profile
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.85)' }}>
+                    <strong>Full Name:</strong> {Fullname}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.85)' }}>
+                    <strong>Date of Birth:</strong> {formattedDob}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.85)' }}>
+                    <strong>Address:</strong> {Address}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.85)' }}>
+                    <strong>Contact Information:</strong> {ContactInfo}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </motion.div>
           </Grid>
-          <Grid item xs={12} sm={6} md={4} className="col-12 mb-3">
-            <Paper className="p-3 text-left bg-light h-100">
-              <Typography variant="h6" gutterBottom>
-                Educational Profile Summary
-              </Typography>
-              <Typography variant="body1"><strong>Highest Qualification:</strong> {qualification}</Typography>
-              <Typography variant="body1"><strong>Institution Name:</strong> {institution}</Typography>
-              <Typography variant="body1"><strong>Year of Graduation:</strong> {graduationYear}</Typography>
-              <Typography variant="body1"><strong>GPA/Percentage:</strong> {gpa}</Typography>
-            </Paper>
+          <Grid item xs={12} sm={6} md={4}>
+            <motion.div variants={cardVariants} initial="hidden" animate="visible">
+              <Card
+                sx={{
+                  height: '100%',
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  backdropFilter: 'blur(16px)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '16px',
+                  boxShadow: '0 12px 24px rgba(0, 0, 0, 0.2)',
+                  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                  '&:hover': {
+                    transform: 'scale(1.05)',
+                    boxShadow: '0 16px 32px rgba(0, 0, 0, 0.3)',
+                  },
+                }}
+              >
+                <CardContent>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontWeight: 'bold',
+                      background: 'linear-gradient(45deg, #38bdf8 0%, #818cf8 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      mb: 1,
+                    }}
+                  >
+                    Educational Profile
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.85)' }}>
+                    <strong>Qualification:</strong> {qualification}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.85)' }}>
+                    <strong>Institution:</strong> {institution}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.85)' }}>
+                    <strong>Graduation Year:</strong> {graduationYear}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.85)' }}>
+                    <strong>GPA:</strong> {gpa}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </motion.div>
           </Grid>
-          <Grid item xs={12} sm={6} md={4} className="col-12 mb-3">
-            <Paper className="p-3 text-left bg-light h-100">
-              <Typography variant="h6" gutterBottom>
-                Financial Profile Summary
-              </Typography>
-              <Typography variant="body1"><strong>Household Income:</strong> {income}</Typography>
-              <Typography variant="body1"><strong>Employment Status:</strong> {employment}</Typography>
-              <Typography variant="body1"><strong>Other Financial Information:</strong> {financialInfo}</Typography>
-            </Paper>
+          <Grid item xs={12} sm={6} md={4}>
+            <motion.div variants={cardVariants} initial="hidden" animate="visible">
+              <Card
+                sx={{
+                  height: '100%',
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  backdropFilter: 'blur(16px)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '16px',
+                  boxShadow: '0 12px 24px rgba(0, 0, 0, 0.2)',
+                  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                  '&:hover': {
+                    transform: 'scale(1.05)',
+                    boxShadow: '0 16px 32px rgba(0, 0, 0, 0.3)',
+                  },
+                }}
+              >
+                <CardContent>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontWeight: 'bold',
+                      background: 'linear-gradient(45deg, #38bdf8 0%, #818cf8 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      mb: 1,
+                    }}
+                  >
+                    Financial Profile
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.85)' }}>
+                    <strong>Income:</strong> {income}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.85)' }}>
+                    <strong>Employment:</strong> {employment}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.85)' }}>
+                    <strong>Financial Info:</strong> {financialInfo}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </motion.div>
           </Grid>
         </Grid>
-        <Paper className="p-4 text-center mt-4 bg-light rounded-3 shadow-sm">
-          <Typography variant="h5" gutterBottom>
-            Decision: {decision.status}
-          </Typography>
-        </Paper>
-        <Box className="d-flex justify-content-between w-100 mt-4">
-          <Button variant="outlined" color="secondary" onClick={handleBackClick} sx={{ borderRadius: '20px', px: 4, width: { xs: '100%', sm: 'auto' } }}>
+        <Box sx={{ mt: 4, textAlign: 'center' }}>
+          <Card
+            sx={{
+              background: 'rgba(255, 255, 255, 0.03)',
+              backdropFilter: 'blur(16px)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              borderRadius: '16px',
+              boxShadow: '0 12px 24px rgba(0, 0, 0, 0.2)',
+              p: 3,
+            }}
+          >
+            <Typography
+              variant="h5"
+              sx={{
+                fontWeight: 'bold',
+                background:
+                  decision.status === 'Approved'
+                    ? 'linear-gradient(45deg, #4ade80 0%, #22c55e 100%)'
+                    : 'linear-gradient(45deg, #f87171 0%, #ef4444 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
+              Decision: {decision.status}
+            </Typography>
+          </Card>
+        </Box>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
+          <Button
+            variant="outlined"
+            onClick={handleBackClick}
+            sx={{
+              py: 2,
+              px: 4,
+              borderRadius: '50px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              color: 'rgba(255, 255, 255, 0.85)',
+              fontSize: '1.1rem',
+              fontWeight: 600,
+              textTransform: 'none',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                background: 'rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
+              },
+            }}
+          >
             Back
           </Button>
-          <Button variant="contained" color="primary" onClick={handleSubmitClick} sx={{ borderRadius: '20px', px: 4, width: { xs: '100%', sm: 'auto' } }}>
+          <Button
+            variant="contained"
+            onClick={handleSubmitClick}
+            sx={{
+              py: 2,
+              px: 4,
+              borderRadius: '50px',
+              background: 'linear-gradient(45deg, #4f46e5 0%, #6366f1 100%)',
+              fontSize: '1.1rem',
+              fontWeight: 600,
+              textTransform: 'none',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                boxShadow: '0 8px 24px rgba(79, 70, 229, 0.4)',
+              },
+            }}
+          >
             Submit
           </Button>
         </Box>
-      </Box>
+      </motion.div>
     </Container>
   );
 };

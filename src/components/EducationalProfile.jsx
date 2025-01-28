@@ -1,21 +1,34 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, Typography, Container, Box, TextField, Grid, MenuItem, Select, FormControl, InputLabel, FormHelperText } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setEducationalProfile } from '../Redux/EducationalProfileSlice';
+import { motion } from 'framer-motion';
 
 const EducationalProfile = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const storedProfileData = useSelector((state) => state.Educationalform);
+  const loanType = useSelector((state) => state.loan.loanType);
 
   const [formEducationalData, setFormEducationalData] = useState({
-    qualification: "",
-    institution: "",
-    graduationYear: "",
-    gpa: "",
+    qualification: storedProfileData.qualification || "",
+    institution: storedProfileData.institution || "",
+    graduationYear: storedProfileData.graduationYear || "",
+    gpa: storedProfileData.gpa || "",
   });
 
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    // Prepopulate form with stored data if available
+    setFormEducationalData({
+      qualification: storedProfileData.qualification || "",
+      institution: storedProfileData.institution || "",
+      graduationYear: storedProfileData.graduationYear || "",
+      gpa: storedProfileData.gpa || "",
+    });
+  }, [storedProfileData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,22 +40,20 @@ const EducationalProfile = () => {
 
   const validate = () => {
     let validationErrors = {};
+    const institutionPattern = /^[A-Za-z\s]+$/;
+    const gpaPattern = /^(?:\d+(?:\.\d{1,2})?)$/;
 
     if (!formEducationalData.qualification) {
       validationErrors.qualification = "Qualification is required";
     }
-    if (!formEducationalData.institution) {
-      validationErrors.institution = "Institution Name is required";
+    if (!formEducationalData.institution || !institutionPattern.test(formEducationalData.institution)) {
+      validationErrors.institution = "Institution Name should contain only alphabetic characters";
     }
     if (!formEducationalData.graduationYear) {
       validationErrors.graduationYear = "Year of Graduation is required";
-    } else if (isNaN(formEducationalData.graduationYear) || formEducationalData.graduationYear.length !== 4) {
-      validationErrors.graduationYear = "Year of Graduation must be a 4-digit number";
     }
-    if (!formEducationalData.gpa) {
-      validationErrors.gpa = "GPA/Percentage is required";
-    } else if (isNaN(formEducationalData.gpa) || formEducationalData.gpa < 0 || formEducationalData.gpa > 100) {
-      validationErrors.gpa = "GPA/Percentage must be a number between 0 and 100";
+    if (!formEducationalData.gpa || !gpaPattern.test(formEducationalData.gpa) || formEducationalData.gpa < 0 || formEducationalData.gpa > 100) {
+      validationErrors.gpa = "GPA/Percentage must be a valid number between 0 and 100";
     }
 
     setErrors(validationErrors);
@@ -56,174 +67,305 @@ const EducationalProfile = () => {
     }
   };
 
-  const loanType = useSelector((state) => state.loan.loanType);
   const handleBackClick = () => {
     navigate(`/PersonalProfile/${loanType}`);
   };
 
+  const currentYear = new Date().getFullYear();
+  const graduationYears = Array.from({ length: 50 }, (_, i) => currentYear - i);
+
   return (
     <Container
       component="main"
-      maxWidth="sm"
+      maxWidth={false}
+      disableGutters
       sx={{
-        height: '100vh',
+        minHeight: '100vh',
         display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
         alignItems: 'center',
-        padding: { xs: 3, sm: 4 },
-      // Subtle background color
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, #0f172a, #1e293b)',
+        padding: 4,
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
+      {/* Animated background elements */}
       <Box
         sx={{
-          backgroundColor: '#fff',
-          padding: { xs: 3, sm: 4 },
-          borderRadius: 3,
-          boxShadow: 4,
-          textAlign: 'center',
+          position: 'absolute',
           width: '100%',
-          transition: 'all 0.3s ease',
-          '&:hover': {
-            boxShadow: 20,
-          },
+          height: '100%',
+          background: `linear-gradient(45deg, rgba(79, 70, 229, 0.2) 0%, rgba(99, 102, 241, 0.2) 100%)`,
+          opacity: 0.05,
+          animation: 'pulse 20s ease infinite',
+          '@keyframes pulse': {
+            '0%, 100%': { transform: 'scale(1)' },
+            '50%': { transform: 'scale(1.05)' }
+          }
         }}
+      />
+
+      {/* Floating gradient circles */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '10%',
+          left: '5%',
+          width: '200px',
+          height: '200px',
+          background: 'radial-gradient(circle, rgba(79, 70, 229, 0.2) 0%, transparent 70%)',
+          borderRadius: '50%',
+          animation: 'float 6s ease-in-out infinite',
+          '@keyframes float': {
+            '0%, 100%': { transform: 'translateY(0)' },
+            '50%': { transform: 'translateY(-20px)' }
+          }
+        }}
+      />
+      <Box
+        sx={{
+          position: 'absolute',
+          bottom: '10%',
+          right: '5%',
+          width: '300px',
+          height: '300px',
+          background: 'radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, transparent 70%)',
+          borderRadius: '50%',
+          animation: 'float 8s ease-in-out infinite',
+          '@keyframes float': {
+            '0%, 100%': { transform: 'translateY(0)' },
+            '50%': { transform: 'translateY(-20px)' }
+          }
+        }}
+      />
+
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: 'easeOut' }}
       >
-        <Typography component="h1" variant="h4" gutterBottom color="primary">
-          Educational Profile
-        </Typography>
-        
-        <Grid container spacing={3}>
-          {/* Qualification */}
-          <Grid item xs={12}>
-            <FormControl fullWidth error={!!errors.qualification}>
-              <InputLabel>Highest Qualification</InputLabel>
-              <Select
-                name="qualification"
-                value={formEducationalData.qualification}
-                onChange={handleChange}
-                label="Highest Qualification"
-                sx={{
-                  textAlign: 'left',
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: '12px',
-                  },
-                }}
-                MenuProps={{
-                  PaperProps: {
-                    sx: {
-                      '& .MuiMenuItem-root': {
-                        textAlign: 'left',
+        <Box
+          sx={{
+            backgroundColor: 'rgba(255, 255, 255, 0.03)',
+            backdropFilter: 'blur(16px)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            padding: { xs: 3, sm: 4 },
+            borderRadius: 4,
+            boxShadow: '0 24px 48px rgba(0, 0, 0, 0.2)',
+            textAlign: 'center',
+            width: '100%',
+            maxWidth: '600px',
+            transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+            '&:hover': {
+              transform: 'translateY(-10px)',
+              boxShadow: '0 32px 64px rgba(0, 0, 0, 0.3)',
+            },
+          }}
+        >
+          <Typography
+            component="h1"
+            variant={window.innerWidth < 600 ? 'h4' : 'h3'}
+            sx={{
+              fontWeight: 800,
+              mb: 3,
+              background: 'linear-gradient(45deg, #38bdf8, #818cf8)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              lineHeight: 1.2,
+            }}
+          >
+            Educational Profile
+          </Typography>
+
+          <Grid container spacing={4}>
+            {/* Qualification */}
+            <Grid item xs={12}>
+              <FormControl fullWidth error={!!errors.qualification}>
+                <InputLabel sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>Highest Qualification</InputLabel>
+                <Select
+                  name="qualification"
+                  value={formEducationalData.qualification}
+                  onChange={handleChange}
+                  label="Highest Qualification"
+                  sx={{
+                    textAlign: 'left',
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: '10px',
+                      backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                    },
+                    '& .MuiSelect-icon': {
+                      color: 'rgba(255, 255, 255, 0.7)',
+                    },
+                  }}
+                  MenuProps={{
+                    PaperProps: {
+                      sx: {
+                        backgroundColor: '#1e293b',
+                        color: 'rgba(255, 255, 255, 0.9)',
                       },
                     },
+                  }}
+                >
+                  <MenuItem value="Bachelors">Bachelors</MenuItem>
+                  <MenuItem value="Masters">Masters</MenuItem>
+                  <MenuItem value="PhD">PhD</MenuItem>
+                </Select>
+                {errors.qualification && <FormHelperText sx={{ color: '#ff4081' }}>{errors.qualification}</FormHelperText>}
+              </FormControl>
+            </Grid>
+
+            {/* Institution Name */}
+            <Grid item xs={12}>
+              <TextField
+                name="institution"
+                label="Institution Name"
+                placeholder="Enter the name of your institution"
+                variant="outlined"
+                fullWidth
+                value={formEducationalData.institution}
+                onChange={handleChange}
+                error={!!errors.institution}
+                helperText={errors.institution}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '10px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: 'rgba(255, 255, 255, 0.7)',
+                  },
+                  '& .MuiInputBase-input': {
+                    color: 'rgba(255, 255, 255, 0.9)',
                   },
                 }}
-              >
-                <MenuItem value="Bachelors">Bachelors</MenuItem>
-                <MenuItem value="Masters">Masters</MenuItem>
-                <MenuItem value="PhD">PhD</MenuItem>
-              </Select>
-              {errors.qualification && <FormHelperText>{errors.qualification}</FormHelperText>}
-            </FormControl>
+              />
+            </Grid>
+
+            {/* Graduation Year */}
+            <Grid item xs={12}>
+              <FormControl fullWidth error={!!errors.graduationYear}>
+                <InputLabel sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>Year of Graduation</InputLabel>
+                <Select
+                  name="graduationYear"
+                  value={formEducationalData.graduationYear}
+                  onChange={handleChange}
+                  label="Year of Graduation"
+                  sx={{
+                    textAlign: 'left',
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: '10px',
+                      backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                    },
+                    '& .MuiSelect-icon': {
+                      color: 'rgba(255, 255, 255, 0.7)',
+                    },
+                  }}
+                  MenuProps={{
+                    PaperProps: {
+                      sx: {
+                        backgroundColor: '#1e293b',
+                        color: 'rgba(255, 255, 255, 0.9)',
+                      },
+                    },
+                  }}
+                >
+                  {graduationYears.map((year) => (
+                    <MenuItem key={year} value={year}>
+                      {year}
+                    </MenuItem>
+                  ))}
+                </Select>
+                {errors.graduationYear && <FormHelperText sx={{ color: '#ff4081' }}>{errors.graduationYear}</FormHelperText>}
+              </FormControl>
+            </Grid>
+
+            {/* GPA/Percentage */}
+            <Grid item xs={12}>
+              <TextField
+                name="gpa"
+                label="GPA/Percentage"
+                placeholder="Enter your GPA or percentage (0-100)"
+                variant="outlined"
+                fullWidth
+                value={formEducationalData.gpa}
+                onChange={handleChange}
+                error={!!errors.gpa}
+                helperText={errors.gpa}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '10px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: 'rgba(255, 255, 255, 0.7)',
+                  },
+                  '& .MuiInputBase-input': {
+                    color: 'rgba(255, 255, 255, 0.9)',
+                  },
+                }}
+              />
+            </Grid>
           </Grid>
 
-          {/* Institution Name */}
-          <Grid item xs={12}>
-            <TextField
-              name="institution"
-              label="Institution Name"
-              placeholder="Enter the name of your institution"
-              variant="outlined"
-              fullWidth
-              value={formEducationalData.institution}
-              onChange={handleChange}
-              error={!!errors.institution}
-              helperText={errors.institution}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: '12px',
-                },
-              }}
-            />
-          </Grid>
-
-          {/* Graduation Year */}
-          <Grid item xs={12}>
-            <TextField
-              name="graduationYear"
-              label="Year of Graduation"
-              type="number"
-              placeholder="Enter the 4-digit graduation year"
-              variant="outlined"
-              fullWidth
-              value={formEducationalData.graduationYear}
-              onChange={handleChange}
-              InputLabelProps={{ shrink: true }}
-              error={!!errors.graduationYear}
-              helperText={errors.graduationYear}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: '12px',
-                },
-              }}
-            />
-          </Grid>
-
-          {/* GPA/Percentage */}
-          <Grid item xs={12}>
-            <TextField
-              name="gpa"
-              label="GPA/Percentage"
-              placeholder="Enter your GPA or percentage (0-100)"
-              variant="outlined"
-              fullWidth
-              value={formEducationalData.gpa}
-              onChange={handleChange}
-              error={!!errors.gpa}
-              helperText={errors.gpa}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: '12px',
-                },
-              }}
-            />
-          </Grid>
-        </Grid>
-
-        {/* Buttons */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', mt: 4 }}>
-          <Button
-            variant="outlined"
-            color="secondary"
-            onClick={handleBackClick}
+          {/* Buttons */}
+          <Box
             sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
               width: '100%',
-              padding: '12px',
-              fontSize: '1.1rem',
-              borderRadius: '30px',
-              marginBottom: 2,
-              '&:hover': { borderColor: '#FF4081', color: '#FF4081' },
+              mt: 4,
             }}
           >
-            Back
-          </Button>
+            <Button
+              variant="outlined"
+              onClick={handleBackClick}
+              sx={{
+                py: 2,
+                px: 4,
+                borderRadius: '50px',
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                color: 'rgba(255, 255, 255, 0.85)',
+                fontSize: '1.1rem',
+                fontWeight: 600,
+                textTransform: 'none',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
+                },
+              }}
+            >
+              Back
+            </Button>
 
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleNextClick}
-            sx={{
-              width: '100%',
-              padding: '12px',
-              fontSize: '1.1rem',
-              borderRadius: '30px',
-              '&:hover': { backgroundColor: '#FF4081' },
-            }}
-          >
-            Next
-          </Button>
+            <Button
+              variant="contained"
+              onClick={handleNextClick}
+              sx={{
+                py: 2,
+                px: 4,
+                borderRadius: '50px',
+                background: 'linear-gradient(45deg, #4f46e5, #6366f1)',
+                fontSize: '1.1rem',
+                fontWeight: 600,
+                textTransform: 'none',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  boxShadow: '0 8px 24px rgba(79, 70, 229, 0.4)',
+                },
+              }}
+            >
+              Next
+            </Button>
+          </Box>
         </Box>
-      </Box>
+      </motion.div>
     </Container>
   );
 };

@@ -1,12 +1,26 @@
-import { Button, Typography, Container, Box, Grid, Card, CardContent } from '@mui/material';
+
+import {
+  Button,
+  Typography,
+  Container,
+  Box,
+  Grid,
+  Card,
+  CardContent,
+  useTheme,
+  useMediaQuery,
+} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { motion } from 'framer-motion';
 import { setLoanType } from '../Redux/loanSlice';
 
 const LoanTypeSelection = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const loanType = useSelector((state) => state.loan.loanType);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const handleCardClick = (value) => {
     dispatch(setLoanType(value));
@@ -23,7 +37,7 @@ const LoanTypeSelection = () => {
   };
 
   const handleBackClick = () => {
-    navigate('/WelcomeScreen'); 
+    navigate('/WelcomeScreen');
   };
 
   const loanTypes = [
@@ -32,34 +46,59 @@ const LoanTypeSelection = () => {
     { value: 'R & D', title: 'R & D', description: 'Click to view the eligibility criteria' },
   ];
 
+  const containerVariants = {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: { opacity: 1, scale: 1, transition: { duration: 0.6 } },
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+  };
+
   return (
     <Container
       component="main"
-      maxWidth="md"
+      maxWidth={false}
+      disableGutters
       sx={{
+        minHeight: '100vh',
         display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
         alignItems: 'center',
-        height: '100vh',
-        padding: { xs: 2, sm: 4 },
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+        padding: 4,
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
-      <Box
-        className="bg-white p-4 rounded-3 shadow-lg text-center w-100"
-        sx={{
-          maxWidth: '900px',
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+        style={{
           width: '100%',
-          padding: { xs: 3, sm: 4 },
+          maxWidth: '1200px',
+          padding: '16px',
           borderRadius: '16px',
-          boxShadow: 3,
+          backgroundColor: 'rgba(255, 255, 255, 0.03)',
+          backdropFilter: 'blur(16px)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          boxShadow: '0 24px 48px rgba(0, 0, 0, 0.2)',
+          textAlign: 'center',
         }}
       >
         <Typography
           component="h1"
-          variant="h4"
-          sx={{ fontWeight: 'bold', fontSize: { xs: '1.5rem', sm: '2rem' }, color: '#00B8D4' }}
-          className="mb-4"
+          variant={isMobile ? 'h4' : 'h2'}
+          sx={{
+            fontWeight: 800,
+            mb: 3,
+            background: 'linear-gradient(45deg, #38bdf8 0%, #818cf8 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            lineHeight: 1.2,
+          }}
         >
           Select Loan Type
         </Typography>
@@ -67,57 +106,80 @@ const LoanTypeSelection = () => {
           component="p"
           variant="body1"
           sx={{
-            fontSize: { xs: '1rem', sm: '1.25rem' },
-            marginBottom: 4,
-            lineHeight: 1.6,
-            color: '#333',
+            color: 'rgba(255, 255, 255, 0.85)',
+            fontSize: isMobile ? '1rem' : '1.1rem',
+            mb: 4,
+            lineHeight: 1.7,
           }}
         >
-          Choose from the available loan types.
+          Choose from the available loan types that best suit your academic goals.
         </Typography>
-        <Grid container spacing={3} justifyContent="center">
-          {loanTypes.map((loan) => (
+        <Grid container spacing={4} justifyContent="center">
+          {loanTypes.map((loan, index) => (
             <Grid item xs={12} sm={6} md={4} key={loan.value}>
-              <Card
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  height: '100%',
-                  cursor: 'pointer',
-                  border: loanType === loan.value ? '2px solid #00B8D4' : '2px solid #ccc',
-                  borderRadius: '12px',
-                  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                  '&:hover': {
-                    transform: 'scale(1.05)',
-                    boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-                  },
-                }}
-                onClick={() => handleCardClick(loan.value)}
+              <motion.div
+                variants={cardVariants}
+                initial="hidden"
+                animate="visible"
+                custom={index}
               >
-                <CardContent>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#00B8D4' }}>
-                    {loan.title}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: '#757575' }}>
-                    {loan.description}
-                  </Typography>
-                </CardContent>
-              </Card>
+                <Card
+                  sx={{
+                    height: '100%',
+                    cursor: 'pointer',
+                    background: 'rgba(255, 255, 255, 0.03)',
+                    backdropFilter: 'blur(16px)',
+                    border: loanType === loan.value ? '2px solid #38bdf8' : '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '16px',
+                    boxShadow: '0 12px 24px rgba(0, 0, 0, 0.2)',
+                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                    '&:hover': {
+                      transform: 'scale(1.05)',
+                      boxShadow: '0 16px 32px rgba(0, 0, 0, 0.3)',
+                    },
+                  }}
+                  onClick={() => handleCardClick(loan.value)}
+                >
+                  <CardContent>
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        fontWeight: 'bold',
+                        background: 'linear-gradient(45deg, #38bdf8 0%, #818cf8 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        mb: 1,
+                      }}
+                    >
+                      {loan.title}
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.85)' }}>
+                      {loan.description}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </motion.div>
             </Grid>
           ))}
         </Grid>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: 3 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
           <Button
             variant="outlined"
-            color="secondary"
             onClick={handleBackClick}
             sx={{
-              fontSize: { xs: '1rem', sm: '1.2rem' },
-              padding: { xs: '10px 20px', sm: '12px 24px' },
+              py: 2,
+              px: 4,
               borderRadius: '50px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              color: 'rgba(255, 255, 255, 0.85)',
+              fontSize: '1.1rem',
+              fontWeight: 600,
+              textTransform: 'none',
+              transition: 'all 0.3s ease',
               '&:hover': {
-                backgroundColor: '#FF4081',
+                background: 'rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
               },
             }}
           >
@@ -125,22 +187,28 @@ const LoanTypeSelection = () => {
           </Button>
           <Button
             variant="contained"
-            color="primary"
             onClick={handleNextClick}
             disabled={!loanType}
             sx={{
-              fontSize: { xs: '1rem', sm: '1.2rem' },
-              padding: { xs: '10px 20px', sm: '12px 24px' },
+              py: 2,
+              px: 4,
               borderRadius: '50px',
+              background: loanType
+                ? 'linear-gradient(45deg, #4f46e5 0%, #6366f1 100%)'
+                : 'rgba(255, 255, 255, 0.1)',
+              fontSize: '1.1rem',
+              fontWeight: 600,
+              textTransform: 'none',
+              transition: 'all 0.3s ease',
               '&:hover': {
-                backgroundColor: '#FF4081',
+                boxShadow: loanType ? '0 8px 24px rgba(79, 70, 229, 0.4)' : 'none',
               },
             }}
           >
             Next
           </Button>
         </Box>
-      </Box>
+      </motion.div>
     </Container>
   );
 };
