@@ -18,6 +18,9 @@ import { fetchLatestData } from '../Redux/DashboardSlice'; // Ensure this import
 import * as XLSX from 'xlsx';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
 import { motion } from 'framer-motion';
+import { resetProfile } from '../Redux/PersonalProfileSlice';
+import { resetEducationalProfile } from '../Redux/EducationalProfileSlice';
+import { resetFinancialProfile } from '../Redux/FinancialProfileSlice';
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
@@ -63,6 +66,13 @@ const AdminDashboard = () => {
 
   const handleBackClick = () => {
     navigate('/DecisionScreen'); // Navigate to the Dashboard page
+  };
+
+  const handleHomeClick = () => {
+    dispatch(resetProfile())
+    dispatch(resetEducationalProfile())
+    dispatch(resetFinancialProfile())
+    navigate('/'); // Navigate to the Home page
   };
 
   const containerVariants = {
@@ -297,69 +307,96 @@ const AdminDashboard = () => {
         </Box>
 
         <Divider sx={{ my: 4, borderColor: 'rgba(255, 255, 255, 0.1)' }} />
+        <Box 
+  sx={{ 
+    display: 'flex', 
+    flexDirection: { xs: 'column', sm: 'row' }, 
+    gap: 2, 
+    mt: 4, 
+    justifyContent: { xs: 'center', sm: 'space-between' } 
+  }}
+>
+  <Button
+    variant="outlined"
+    onClick={handleBackClick}
+    sx={{
+      py: 2,
+      px: 4,
+      borderRadius: '50px',
+      background: 'rgba(255, 255, 255, 0.1)',
+      border: '1px solid rgba(255, 255, 255, 0.2)',
+      color: 'rgba(255, 255, 255, 0.85)',
+      fontSize: '1.1rem',
+      fontWeight: 600,
+      textTransform: 'none',
+      transition: 'all 0.3s ease',
+      '&:hover': {
+        background: 'rgba(255, 255, 255, 0.2)',
+        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
+      },
+    }}
+  >
+    Back
+  </Button>
+  <Button
+    variant="contained"
+    onClick={handleHomeClick}
+    sx={{
+      py: 2,
+      px: 4,
+      borderRadius: '50px',
+      background: 'linear-gradient(45deg, #4f46e5 0%, #6366f1 100%)',
+      fontSize: '1.1rem',
+      fontWeight: 600,
+      textTransform: 'none',
+      transition: 'all 0.3s ease',
+      '&:hover': {
+        boxShadow: '0 8px 24px rgba(79, 70, 229, 0.4)',
+      },
+    }}
+  >
+    Home
+  </Button>
+  <Button
+    variant="contained"
+    onClick={handleFetchLatestData}
+    sx={{
+      py: 2,
+      px: 4,
+      borderRadius: '50px',
+      background: 'linear-gradient(45deg, #4f46e5 0%, #6366f1 100%)',
+      fontSize: '1.1rem',
+      fontWeight: 600,
+      textTransform: 'none',
+      transition: 'all 0.3s ease',
+      '&:hover': {
+        boxShadow: '0 8px 24px rgba(79, 70, 229, 0.4)',
+      },
+    }}
+  >
+    Refresh
+  </Button>
+  <Button
+    variant="contained"
+    onClick={handleExport}
+    sx={{
+      py: 2,
+      px: 4,
+      borderRadius: '50px',
+      background: 'linear-gradient(45deg, #4f46e5 0%, #6366f1 100%)',
+      fontSize: '1.1rem',
+      fontWeight: 600,
+      textTransform: 'none',
+      transition: 'all 0.3s ease',
+      '&:hover': {
+        boxShadow: '0 8px 24px rgba(79, 70, 229, 0.4)',
+      },
+    }}
+  >
+    Export Data
+  </Button>
+</Box>
 
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
-          <Button
-            variant="outlined"
-            onClick={handleBackClick}
-            sx={{
-              py: 2,
-              px: 4,
-              borderRadius: '50px',
-              background: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              color: 'rgba(255, 255, 255, 0.85)',
-              fontSize: '1.1rem',
-              fontWeight: 600,
-              textTransform: 'none',
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                background: 'rgba(255, 255, 255, 0.2)',
-                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
-              },
-            }}
-          >
-            Back
-          </Button>
-          <Button
-            variant="contained"
-            onClick={handleFetchLatestData}
-            sx={{
-              py: 2,
-              px: 4,
-              borderRadius: '50px',
-              background: 'linear-gradient(45deg, #4f46e5 0%, #6366f1 100%)',
-              fontSize: '1.1rem',
-              fontWeight: 600,
-              textTransform: 'none',
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                boxShadow: '0 8px 24px rgba(79, 70, 229, 0.4)',
-              },
-            }}
-          >
-            Refresh
-          </Button>
-          <Button
-            variant="contained"
-            onClick={handleExport}
-            sx={{
-              py: 2,
-              px: 4,
-              borderRadius: '50px',
-              background: 'linear-gradient(45deg, #4f46e5 0%, #6366f1 100%)',
-              fontSize: '1.1rem',
-              fontWeight: 600,
-              textTransform: 'none',
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                boxShadow: '0 8px 24px rgba(79, 70, 229, 0.4)',
-              },
-            }}
-          >
-            Export Data
-          </Button>
-        </Box>
       </motion.div>
     </Container>
   );

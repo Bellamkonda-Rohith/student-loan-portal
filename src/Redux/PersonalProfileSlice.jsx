@@ -5,7 +5,6 @@ const initialState = {
     Dob: "",
     Address: "",
     ContactInfo: "",
-    
 };
 
 const PersonalProfileSlice = createSlice({
@@ -13,15 +12,21 @@ const PersonalProfileSlice = createSlice({
   initialState,
   reducers: {
     setpersonalProfile: (state, action) => {
-          const { Fullname, Dob, Address, ContactInfo } = action.payload;
-          state.Fullname = Fullname;
-          state.Dob = Dob;
-          state.Address = Address;
-          state.ContactInfo = ContactInfo;
+      const { Fullname, Dob, Address, ContactInfo } = action.payload;
+      state.Fullname = Fullname;
+      state.Dob = Dob;
+      state.Address = Address;
+      state.ContactInfo = ContactInfo;
+    },
+    resetProfile: (state) => {
+      state.Fullname = "";
+      state.Dob = "";
+      state.Address = "";
+      state.ContactInfo = "";
     },
   },
 });
 
-export const { setpersonalProfile } = PersonalProfileSlice.actions;
+export const { setpersonalProfile, resetProfile } = PersonalProfileSlice.actions;
 
 export default PersonalProfileSlice.reducer;

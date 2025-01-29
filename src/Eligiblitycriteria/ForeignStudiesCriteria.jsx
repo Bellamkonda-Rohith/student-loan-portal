@@ -1,195 +1,231 @@
-import { Typography, Container, Box, Grid, Paper, Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { Typography, Container, Box, Grid, Paper, Button, useTheme, useMediaQuery } from "@mui/material";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const ForeignStudiesCriteria = () => {
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const handleBack = () => {
-    navigate('/LoanTypeSelection');
+    navigate("/LoanTypeSelection");
   };
 
   const handleNext = () => {
-    navigate('/PersonalProfile/foreign');
+    navigate("/PersonalProfile/foreign");
+  };
+
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 50,
+        damping: 15,
+        staggerChildren: 0.2,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
   };
 
   return (
     <Container
       component="main"
-      maxWidth="false"
+      maxWidth={false}
       disableGutters
       sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: { xs: 2, sm: 4 },
-        background: 'linear-gradient(135deg, #00B8D4, #FF4081)',
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
+        padding: 4,
+        position: "relative",
+        overflow: "hidden",
       }}
     >
+      {/* Animated background elements */}
       <Box
         sx={{
-          width: '100%',
-          maxWidth: '600px',
-          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+          position: "absolute",
+          width: "100%",
+          height: "100%",
+          background: `linear-gradient(45deg, ${theme.palette.primary.main} 20%, ${theme.palette.secondary.main} 80%)`,
+          opacity: 0.05,
+          animation: "pulse 20s ease infinite",
+          "@keyframes pulse": {
+            "0%, 100%": { transform: "scale(1)" },
+            "50%": { transform: "scale(1.05)" },
+          },
+        }}
+      />
+
+      {/* Floating gradient circles */}
+      <Box
+        component={motion.div}
+        animate={{ y: [0, 20, 0] }}
+        transition={{ repeat: Infinity, duration: 6 }}
+        sx={{
+          position: "absolute",
+          top: "10%",
+          left: "5%",
+          width: "200px",
+          height: "200px",
+          background: "radial-gradient(circle, rgba(79, 70, 229, 0.2) 0%, transparent 70%)",
+          borderRadius: "50%",
+        }}
+      />
+      <Box
+        component={motion.div}
+        animate={{ y: [0, -20, 0] }}
+        transition={{ repeat: Infinity, duration: 8 }}
+        sx={{
+          position: "absolute",
+          bottom: "10%",
+          right: "5%",
+          width: "300px",
+          height: "300px",
+          background: "radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, transparent 70%)",
+          borderRadius: "50%",
+        }}
+      />
+
+      <Box
+        component={motion.div}
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+        sx={{
+          width: "100%",
+          maxWidth: "800px",
           padding: { xs: 3, sm: 4 },
-          borderRadius: '16px',
-          boxShadow: 5,
-          textAlign: 'center',
+          borderRadius: "16px",
+          backgroundColor: "rgba(255, 255, 255, 0.03)",
+          backdropFilter: "blur(16px)",
+          border: "1px solid rgba(255, 255, 255, 0.1)",
+          boxShadow: "0 24px 48px rgba(0, 0, 0, 0.2)",
+          textAlign: "center",
+          transition: "transform 0.3s ease, box-shadow 0.3s ease",
+          "&:hover": {
+            transform: "translateY(-10px)",
+            boxShadow: "0 32px 64px rgba(0, 0, 0, 0.3)",
+          },
         }}
       >
         <Typography
           component="h1"
-          variant="h4"
-          gutterBottom
+          variant={isMobile ? "h4" : "h2"}
           sx={{
-            fontWeight: 'bold',
-            color: '#00B8D4',
-            fontSize: { xs: '1.8rem', sm: '2rem' },
+            fontWeight: 800,
+            mb: 3,
+            background: "linear-gradient(45deg, #38bdf8 0%, #818cf8 100%)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            lineHeight: 1.2,
           }}
         >
-          Foreign Studies
+          Foreign Studies Loans
         </Typography>
         <Typography
           component="p"
           variant="body1"
-          gutterBottom
           sx={{
-            fontSize: { xs: '1rem', sm: '1.2rem' },
-            color: '#333',
-            lineHeight: 1.6,
+            color: "rgba(255, 255, 255, 0.85)",
+            fontSize: isMobile ? "1rem" : "1.1rem",
+            mb: 4,
+            lineHeight: 1.7,
           }}
         >
           Eligibility Criteria:
         </Typography>
 
-        <Grid container spacing={3} sx={{ marginTop: 2 }}>
-          {/* Education */}
-          <Grid item xs={12}>
-            <Paper
-              sx={{
-                padding: { xs: 2, sm: 3 },
-                backgroundColor: '#f9f9f9',
-                borderRadius: '12px',
-                boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
-                transition: 'transform 0.3s ease',
-                '&:hover': {
-                  transform: 'scale(1.02)',
-                },
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <Typography
-                variant="body1"
+        <Grid container spacing={3} justifyContent="center">
+          {[
+            { label: "Education", value: "Bachelor’s Degree" },
+            { label: "Age", value: "18-35" },
+            { label: "Household Income", value: "Up to $75,000" },
+          ].map((item, index) => (
+            <Grid item xs={12} key={index}>
+              <Paper
+                component={motion.div}
+                variants={itemVariants}
                 sx={{
-                  fontSize: { xs: '0.95rem', sm: '1rem' },
-                  fontWeight: '500',
-                  color: '#555',
+                  padding: { xs: 2, sm: 3 },
+                  backgroundColor: "rgba(255, 255, 255, 0.03)",
+                  backdropFilter: "blur(16px)",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  borderRadius: "12px",
+                  boxShadow: "0 12px 24px rgba(0, 0, 0, 0.2)",
+                  textAlign: "left",
+                  transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                  "&:hover": {
+                    transform: "scale(1.02)",
+                    boxShadow: "0 16px 32px rgba(0, 0, 0, 0.3)",
+                  },
                 }}
               >
-                <strong>Education:</strong> Bachelor’s Degree
-              </Typography>
-            </Paper>
-          </Grid>
-
-          {/* Age */}
-          <Grid item xs={12}>
-            <Paper
-              sx={{
-                padding: { xs: 2, sm: 3 },
-                backgroundColor: '#f9f9f9',
-                borderRadius: '12px',
-                boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
-                transition: 'transform 0.3s ease',
-                '&:hover': {
-                  transform: 'scale(1.02)',
-                },
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <Typography
-                variant="body1"
-                sx={{
-                  fontSize: { xs: '0.95rem', sm: '1rem' },
-                  fontWeight: '500',
-                  color: '#555',
-                }}
-              >
-                <strong>Age:</strong> 18-35
-              </Typography>
-            </Paper>
-          </Grid>
-
-          {/* Household Income */}
-          <Grid item xs={12}>
-            <Paper
-              sx={{
-                padding: { xs: 2, sm: 3 },
-                backgroundColor: '#f9f9f9',
-                borderRadius: '12px',
-                boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
-                transition: 'transform 0.3s ease',
-                '&:hover': {
-                  transform: 'scale(1.02)',
-                },
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <Typography
-                variant="body1"
-                sx={{
-                  fontSize: { xs: '0.95rem', sm: '1rem' },
-                  fontWeight: '500',
-                  color: '#555',
-                }}
-              >
-                <strong>Household Income:</strong> Up to $75,000
-              </Typography>
-            </Paper>
-          </Grid>
+                <Typography
+                  variant="body1"
+                  sx={{
+                    fontSize: isMobile ? "0.9rem" : "1rem",
+                    fontWeight: 500,
+                    color: "rgba(255, 255, 255, 0.85)",
+                  }}
+                >
+                  <strong>{item.label}:</strong> {item.value}
+                </Typography>
+              </Paper>
+            </Grid>
+          ))}
         </Grid>
 
         <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            marginTop: 4,
-            gap: 2,
-          }}
+          sx={{ display: "flex", justifyContent: "space-between", marginTop: 4 }}
         >
           <Button
             variant="outlined"
-            color="secondary"
             onClick={handleBack}
             sx={{
-              flexGrow: 1,
-              padding: { xs: '12px', sm: '10px 20px' },
-              fontSize: { xs: '1rem', sm: '1.2rem' },
-              borderRadius: '30px',
-              borderColor: '#FF4081',
-              '&:hover': { backgroundColor: '#FF4081', color: '#fff' },
+              py: 2,
+              px: 4,
+              borderRadius: "50px",
+              background: "rgba(255, 255, 255, 0.1)",
+              border: "1px solid rgba(255, 255, 255, 0.2)",
+              color: "rgba(255, 255, 255, 0.85)",
+              fontSize: "1.1rem",
+              fontWeight: 600,
+              textTransform: "none",
+              transition: "all 0.3s ease",
+              "&:hover": {
+                background: "rgba(255, 255, 255, 0.2)",
+                boxShadow: "0 8px 24px rgba(0, 0, 0, 0.3)",
+              },
             }}
           >
             Back
           </Button>
-
           <Button
             variant="contained"
-            color="primary"
             onClick={handleNext}
             sx={{
-              flexGrow: 1,
-              padding: { xs: '12px', sm: '10px 20px' },
-              fontSize: { xs: '1rem', sm: '1.2rem' },
-              borderRadius: '30px',
-              backgroundColor: '#00B8D4',
-              '&:hover': { backgroundColor: '#FF4081' },
+              py: 2,
+              px: 4,
+              borderRadius: "50px",
+              background: "linear-gradient(45deg, #4f46e5 0%, #6366f1 100%)",
+              fontSize: "1.1rem",
+              fontWeight: 600,
+              textTransform: "none",
+              transition: "all 0.3s ease",
+              "&:hover": {
+                boxShadow: "0 8px 24px rgba(79, 70, 229, 0.4)",
+              },
             }}
           >
             Next
