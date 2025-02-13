@@ -1,39 +1,62 @@
-import {
+import { 
   Typography,
   Container,
   Box,
   Grid,
   Card,
   CardContent,
-  Divider,
-  Button,
   List,
   ListItem,
   ListItemText,
   useTheme,
   useMediaQuery,
+  Button
 } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchLatestData } from '../Redux/DashboardSlice'; // Ensure this import is correct
+import { fetchLatestData } from '../Redux/DashboardSlice';
 import * as XLSX from 'xlsx';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { resetProfile } from '../Redux/PersonalProfileSlice';
 import { resetEducationalProfile } from '../Redux/EducationalProfileSlice';
 import { resetFinancialProfile } from '../Redux/FinancialProfileSlice';
+import { ArrowBack, Home, Refresh, Description } from '@mui/icons-material';
+
+const colors = {
+  primary: '#2A4B8C',
+  secondary: '#3A86FF',
+  background: '#F8FAFF',
+  textPrimary: '#1A237E',
+  textSecondary: '#455A64',
+  success: '#00BFA5',
+  error: '#FF5252',
+  accent: '#FF6B6B'
+};
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
+  
+  // Redux selectors
   const totalApplication = useSelector((state) => state.DashboardDetails.TotalApplications);
   const totalQualified = useSelector((state) => state.DashboardDetails.QualifiedApplications);
   const totalRejected = useSelector((state) => state.DashboardDetails.NotQualifiedApplications);
   const reasonsForRejected = useSelector((state) => state.DashboardDetails.disqualificationReasons);
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
+  // Handler functions
+  const handleBackClick = () => navigate('/DecisionScreen');
+  
+  const handleHomeClick = () => {
+    dispatch(resetProfile());
+    dispatch(resetEducationalProfile());
+    dispatch(resetFinancialProfile());
+    navigate('/');
+  };
+
   const handleExport = () => {
-    // Prepare data for export
     const data = [
       ['Metric', 'Value'],
       ['Total Applications', totalApplication || 0],
@@ -41,364 +64,294 @@ const AdminDashboard = () => {
       ['Not Qualified Applications', totalRejected || 0],
       [''],
       ['Reasons for Disqualification'],
-      ...reasonsForRejected.map((reason, index) => [`${index + 1}. ${reason}`]),
+      ...(reasonsForRejected?.map((reason, index) => [`${index + 1}. ${reason}`]) || [])
     ];
 
-    // Create worksheet and workbook
     const worksheet = XLSX.utils.aoa_to_sheet(data);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Application Statistics');
-
-    // Export file
     XLSX.writeFile(workbook, 'Application_Statistics.xlsx');
   };
 
   const handleFetchLatestData = () => {
-    const latestData = {
+    dispatch(fetchLatestData({
       applications: totalApplication,
       Qapplications: totalQualified,
       notQualifiedApplications: totalRejected,
       disqualificationReasons: reasonsForRejected,
-    };
-
-    dispatch(fetchLatestData(latestData));
-  };
-
-  const handleBackClick = () => {
-    navigate('/DecisionScreen'); // Navigate to the Dashboard page
-  };
-
-  const handleHomeClick = () => {
-    dispatch(resetProfile())
-    dispatch(resetEducationalProfile())
-    dispatch(resetFinancialProfile())
-    navigate('/'); // Navigate to the Home page
-  };
-
-  const containerVariants = {
-    hidden: { opacity: 0, scale: 0.95 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 0.6 } },
-  };
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+    }));
   };
 
   return (
-    <Container
-      component="main"
-      maxWidth={false}
-      disableGutters
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-        padding: 4,
-        position: 'relative',
-        overflow: 'hidden',
-      }}
-    >
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={containerVariants}
-        style={{
-          width: '100%',
-          maxWidth: '1200px',
-          padding: '16px',
-          borderRadius: '16px',
-          backgroundColor: 'rgba(255, 255, 255, 0.03)',
-          backdropFilter: 'blur(16px)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          boxShadow: '0 24px 48px rgba(0, 0, 0, 0.2)',
-          textAlign: 'center',
-        }}
-      >
-        <Typography
-          component="h1"
-          variant={isMobile ? 'h4' : 'h2'}
-          sx={{
-            fontWeight: 800,
-            mb: 3,
-            background: 'linear-gradient(45deg, #38bdf8 0%, #818cf8 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            lineHeight: 1.2,
-          }}
+    <Box sx={{
+      minHeight: '100vh',
+      backgroundColor: colors.background,
+      position: 'relative',
+      overflow: 'hidden',
+      py: 4,
+      backgroundImage: 'radial-gradient(circle at 15% 50%, rgba(58, 134, 255, 0.1), transparent 40%)'
+    }}>
+      <Container maxWidth="xl" sx={{ px: isMobile ? 2 : 4 }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
         >
-          Admin Dashboard
-        </Typography>
-        <Typography
-          component="p"
-          variant="body1"
-          sx={{
-            color: 'rgba(255, 255, 255, 0.85)',
-            fontSize: isMobile ? '1rem' : '1.1rem',
-            mb: 4,
-            lineHeight: 1.7,
-          }}
-        >
-          Overview of application statistics.
-        </Typography>
-
-        <Grid container spacing={4} justifyContent="center">
-          <Grid item xs={12} sm={4}>
-            <motion.div variants={cardVariants}>
-              <Card
-                sx={{
-                  height: '100%',
-                  background: 'rgba(255, 255, 255, 0.03)',
-                  backdropFilter: 'blur(16px)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: '16px',
-                  boxShadow: '0 12px 24px rgba(0, 0, 0, 0.2)',
-                  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                  '&:hover': {
-                    transform: 'scale(1.05)',
-                    boxShadow: '0 16px 32px rgba(0, 0, 0, 0.3)',
-                  },
-                }}
-              >
-                <CardContent>
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      fontWeight: 'bold',
-                      background: 'linear-gradient(45deg, #38bdf8 0%, #818cf8 100%)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      mb: 1,
-                    }}
-                  >
-                    Total Applications
-                  </Typography>
-                  <Typography variant="h5" sx={{ color: 'rgba(255, 255, 255, 0.85)' }}>
-                    {totalApplication || 0}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <motion.div variants={cardVariants}>
-              <Card
-                sx={{
-                  height: '100%',
-                  background: 'rgba(255, 255, 255, 0.03)',
-                  backdropFilter: 'blur(16px)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: '16px',
-                  boxShadow: '0 12px 24px rgba(0, 0, 0, 0.2)',
-                  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                  '&:hover': {
-                    transform: 'scale(1.05)',
-                    boxShadow: '0 16px 32px rgba(0, 0, 0, 0.3)',
-                  },
-                }}
-              >
-                <CardContent>
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      fontWeight: 'bold',
-                      background: 'linear-gradient(45deg, #38bdf8 0%, #818cf8 100%)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      mb: 1,
-                    }}
-                  >
-                    Qualified Applications
-                  </Typography>
-                  <Typography variant="h5" sx={{ color: 'rgba(255, 255, 255, 0.85)' }}>
-                    {totalQualified || 0}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <motion.div variants={cardVariants}>
-              <Card
-                sx={{
-                  height: '100%',
-                  background: 'rgba(255, 255, 255, 0.03)',
-                  backdropFilter: 'blur(16px)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: '16px',
-                  boxShadow: '0 12px 24px rgba(0, 0, 0, 0.2)',
-                  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                  '&:hover': {
-                    transform: 'scale(1.05)',
-                    boxShadow: '0 16px 32px rgba(0, 0, 0, 0.3)',
-                  },
-                }}
-              >
-                <CardContent>
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      fontWeight: 'bold',
-                      background: 'linear-gradient(45deg, #38bdf8 0%, #818cf8 100%)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      mb: 1,
-                    }}
-                  >
-                    Not Qualified Applications
-                  </Typography>
-                  <Typography variant="h5" sx={{ color: 'rgba(255, 255, 255, 0.85)' }}>
-                    {totalRejected || 0}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </Grid>
-        </Grid>
-
-        <Divider sx={{ my: 4, borderColor: 'rgba(255, 255, 255, 0.1)' }} />
-
-        <Box>
-          <Typography
-            variant="h6"
-            sx={{
-              fontWeight: 'bold',
-              background: 'linear-gradient(45deg, #38bdf8 0%, #818cf8 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              mb: 2,
-            }}
-          >
-            Reasons for Failures
-          </Typography>
-          <motion.div variants={cardVariants}>
-            <Card
+          {/* Header Section */}
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center',
+            mb: 4
+          }}>
+            <Button
+              startIcon={<ArrowBack />}
+              onClick={handleBackClick}
               sx={{
-                background: 'linear-gradient(45deg,rgb(156, 206, 228) 0%, #818cf8 100%)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                borderRadius: '16px',
-                boxShadow: '0 12px 24px rgba(0, 0, 0, 0.2)',
-                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                color: colors.primary,
+                borderRadius: '8px',
+                px: 3,
+                py: 1,
+                border: `2px solid ${colors.primary}`,
                 '&:hover': {
-                  transform: 'scale(1.02)',
-                  boxShadow: '0 16px 32px rgba(0, 0, 0, 0.3)',
-                },
+                  backgroundColor: 'rgba(42, 75, 140, 0.05)'
+                }
               }}
             >
-              <CardContent>
-                <List sx={{ listStyleType: 'disc', pl: 2 }}>
-                  {reasonsForRejected && reasonsForRejected.length > 0 ? (
-                    reasonsForRejected.map((reason, index) => (
-                      <ListItem key={index} sx={{ display: 'list-item' }}>
-                        <ListItemText primary={`${index + 1}. ${reason}`} sx={{ color: 'rgba(216, 204, 204, 0.85)' }} />
+              Back
+            </Button>
+            <Typography variant="h3" sx={{
+              fontWeight: 800,
+              background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`,
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              fontSize: isMobile ? '2rem' : '2.8rem',
+              letterSpacing: '-0.05em'
+            }}>
+              Application Insights
+            </Typography>
+            <div /> {/* Spacer */}
+          </Box>
+
+          {/* Stats Cards */}
+          <Grid container spacing={3} sx={{ mb: 4 }}>
+            {[
+              { 
+                title: 'Total Applications', 
+                value: totalApplication || 0, 
+                color: colors.primary,
+                icon: <Description sx={{ color: colors.primary, fontSize: 28 }} />
+              },
+              { 
+                title: 'Qualified', 
+                value: totalQualified || 0, 
+                color: colors.success,
+                icon: <Description sx={{ color: colors.success, fontSize: 28 }} />
+              },
+              { 
+                title: 'Rejected', 
+                value: totalRejected || 0, 
+                color: colors.error,
+                icon: <Description sx={{ color: colors.error, fontSize: 28 }} />
+              }
+            ].map((stat, index) => (
+              <Grid item xs={12} md={4} key={index}>
+                <motion.div whileHover={{ scale: 1.03 }}>
+                  <Card sx={{
+                    height: '100%',
+                    borderRadius: '16px',
+                    boxShadow: '0 8px 32px rgba(42, 75, 140, 0.1)',
+                    background: `linear-gradient(145deg, ${stat.color}10, ${stat.color}08)`,
+                    border: `1px solid ${stat.color}20`,
+                    backdropFilter: 'blur(12px)',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    '&:before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: '4px',
+                      background: stat.color
+                    }
+                  }}>
+                    <CardContent sx={{ p: 3 }}>
+                      <Box sx={{ 
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 2,
+                        mb: 2
+                      }}>
+                        {stat.icon}
+                        <Typography variant="h6" sx={{ 
+                          fontWeight: 700,
+                          color: colors.textPrimary,
+                          letterSpacing: '-0.02em'
+                        }}>
+                          {stat.title}
+                        </Typography>
+                      </Box>
+                      <Typography variant="h2" sx={{
+                        fontWeight: 800,
+                        color: stat.color,
+                        textAlign: 'center',
+                        fontSize: isMobile ? '2.5rem' : '3.5rem',
+                        textShadow: `0 2px 8px ${stat.color}20`
+                      }}>
+                        {stat.value}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </Grid>
+            ))}
+          </Grid>
+
+          {/* Disqualification Analysis Section */}
+          <Box sx={{ 
+            mb: 4,
+            borderRadius: '16px',
+            overflow: 'hidden',
+            boxShadow: '0 8px 32px rgba(42, 75, 140, 0.1)',
+            border: `1px solid ${colors.primary}20`,
+            background: 'linear-gradient(145deg, #FFFFFF, #F8FAFF)'
+          }}>
+            <Box sx={{
+              p: 3,
+              background: `linear-gradient(90deg, ${colors.primary}, ${colors.secondary})`
+            }}>
+              <Typography variant="h5" sx={{
+                fontWeight: 700,
+                color: '#fff',
+                letterSpacing: '-0.02em'
+              }}>
+                Disqualification Analysis
+              </Typography>
+            </Box>
+            
+            <CardContent sx={{ p: 3 }}>
+              {reasonsForRejected?.length > 0 ? (
+                <List disablePadding>
+                  {reasonsForRejected.map((reason, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                    >
+                      <ListItem sx={{
+                        p: 2,
+                        mb: 1,
+                        borderRadius: '8px',
+                        background: index % 2 === 0 ? '#fff' : '#f8f9ff',
+                        '&:hover': {
+                          transform: 'translateX(4px)',
+                          boxShadow: '0 4px 12px rgba(42, 75, 140, 0.1)'
+                        },
+                        transition: 'all 0.3s ease'
+                      }}>
+                        <Box sx={{
+                          width: 8,
+                          height: 8,
+                          borderRadius: '50%',
+                          background: colors.error,
+                          mr: 2
+                        }} />
+                        <ListItemText 
+                          primary={reason} 
+                          primaryTypographyProps={{ 
+                            variant: 'body1',
+                            sx: {
+                              fontWeight: 500,
+                              color: colors.textPrimary,
+                              letterSpacing: '-0.01em'
+                            }
+                          }} 
+                        />
                       </ListItem>
-                    ))
-                  ) : (
-                    <ListItem>
-                      <ListItemText primary="No reasons for disqualification available." sx={{ color: 'rgba(255, 255, 255, 0.85)' }} />
-                    </ListItem>
-                  )}
+                    </motion.div>
+                  ))}
                 </List>
-              </CardContent>
-            </Card>
-          </motion.div>
-        </Box>
+              ) : (
+                <Box sx={{ 
+                  p: 4, 
+                  textAlign: 'center',
+                  background: '#f8f9ff',
+                  borderRadius: '8px'
+                }}>
+                  <Typography variant="body1" sx={{ 
+                    color: colors.textSecondary,
+                    fontStyle: 'italic'
+                  }}>
+                    No disqualification patterns detected
+                  </Typography>
+                </Box>
+              )}
+            </CardContent>
+          </Box>
 
-        <Divider sx={{ my: 4, borderColor: 'rgba(255, 255, 255, 0.1)' }} />
-        <Box 
-  sx={{ 
-    display: 'flex', 
-    flexDirection: { xs: 'column', sm: 'row' }, 
-    gap: 2, 
-    mt: 4, 
-    justifyContent: { xs: 'center', sm: 'space-between' } 
-  }}
->
-  <Button
-    variant="outlined"
-    onClick={handleBackClick}
-    sx={{
-      py: 2,
-      px: 4,
-      borderRadius: '50px',
-      background: 'rgba(255, 255, 255, 0.1)',
-      border: '1px solid rgba(255, 255, 255, 0.2)',
-      color: 'rgba(255, 255, 255, 0.85)',
-      fontSize: '1.1rem',
-      fontWeight: 600,
-      textTransform: 'none',
-      transition: 'all 0.3s ease',
-      '&:hover': {
-        background: 'rgba(255, 255, 255, 0.2)',
-        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
-      },
-    }}
-  >
-    Back
-  </Button>
-  <Button
-    variant="contained"
-    onClick={handleHomeClick}
-    sx={{
-      py: 2,
-      px: 4,
-      borderRadius: '50px',
-      background: 'linear-gradient(45deg, #4f46e5 0%, #6366f1 100%)',
-      fontSize: '1.1rem',
-      fontWeight: 600,
-      textTransform: 'none',
-      transition: 'all 0.3s ease',
-      '&:hover': {
-        boxShadow: '0 8px 24px rgba(79, 70, 229, 0.4)',
-      },
-    }}
-  >
-    Home
-  </Button>
-  <Button
-    variant="contained"
-    onClick={handleFetchLatestData}
-    sx={{
-      py: 2,
-      px: 4,
-      borderRadius: '50px',
-      background: 'linear-gradient(45deg, #4f46e5 0%, #6366f1 100%)',
-      fontSize: '1.1rem',
-      fontWeight: 600,
-      textTransform: 'none',
-      transition: 'all 0.3s ease',
-      '&:hover': {
-        boxShadow: '0 8px 24px rgba(79, 70, 229, 0.4)',
-      },
-    }}
-  >
-    Refresh
-  </Button>
-  <Button
-    variant="contained"
-    onClick={handleExport}
-    sx={{
-      py: 2,
-      px: 4,
-      borderRadius: '50px',
-      background: 'linear-gradient(45deg, #4f46e5 0%, #6366f1 100%)',
-      fontSize: '1.1rem',
-      fontWeight: 600,
-      textTransform: 'none',
-      transition: 'all 0.3s ease',
-      '&:hover': {
-        boxShadow: '0 8px 24px rgba(79, 70, 229, 0.4)',
-      },
-    }}
-  >
-    Export Data
-  </Button>
-</Box>
-
-      </motion.div>
-    </Container>
+          {/* Action Panel */}
+          <Box sx={{
+            mt: 6,
+            p: 3,
+            borderRadius: '16px',
+            background: 'linear-gradient(145deg, #FFFFFF, #F8FAFF)',
+            boxShadow: '0 8px 32px rgba(42, 75, 140, 0.1)',
+            border: `1px solid ${colors.primary}20`
+          }}>
+            <Grid container spacing={3} justifyContent="center">
+              {[
+                { 
+                  label: 'Home', 
+                  icon: <Home sx={{ fontSize: 24 }} />,
+                  action: handleHomeClick,
+                  color: colors.primary
+                },
+                { 
+                  label: 'Refresh Data', 
+                  icon: <Refresh sx={{ fontSize: 24 }} />,
+                  action: handleFetchLatestData,
+                  color: colors.secondary
+                },
+                { 
+                  label: 'Export Report', 
+                  icon: <Description sx={{ fontSize: 24 }} />,
+                  action: handleExport,
+                  color: colors.accent
+                }
+              ].map((btn, index) => (
+                <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
+                  <motion.div whileHover={{ scale: 1.05 }}>
+                    <Button
+                      fullWidth
+                      variant="contained"
+                      startIcon={btn.icon}
+                      onClick={btn.action}
+                      sx={{
+                        py: 2,
+                        borderRadius: '12px',
+                        background: `linear-gradient(135deg, ${btn.color}, ${btn.color}CC)`,
+                        color: 'white',
+                        fontWeight: 700,
+                        letterSpacing: '-0.01em',
+                        textTransform: 'none',
+                        boxShadow: `0 4px 16px ${btn.color}30`,
+                        '&:hover': {
+                          boxShadow: `0 6px 20px ${btn.color}50`
+                        }
+                      }}
+                    >
+                      {btn.label}
+                    </Button>
+                  </motion.div>
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+        </motion.div>
+      </Container>
+    </Box>
   );
 };
 

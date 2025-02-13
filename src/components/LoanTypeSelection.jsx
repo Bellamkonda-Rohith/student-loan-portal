@@ -1,19 +1,25 @@
-
-import {
-  Button,
-  Typography,
+import { 
+  Button, 
+  Typography, 
   Container,
-  Box,
-  Grid,
-  Card,
-  CardContent,
-  useTheme,
+  Box, 
+  Grid, 
+  Card, 
+  CardContent, 
+  useTheme, 
   useMediaQuery,
+  IconButton,
+  Avatar
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { setLoanType } from '../Redux/loanSlice';
+import ArrowBackIosNew from '@mui/icons-material/ArrowBackIosNew';
+import CheckCircle from '@mui/icons-material/CheckCircle';
+import School from '@mui/icons-material/School';
+import Language from '@mui/icons-material/Language';
+import Science from '@mui/icons-material/Science';
 
 const LoanTypeSelection = () => {
   const dispatch = useDispatch();
@@ -22,138 +28,139 @@ const LoanTypeSelection = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
+  // Color scheme matching Tata Capital's style
+  const colors = {
+    primary: '#2A4B8C',
+    secondary: '#E53E3E',
+    background: '#F7FAFC',
+    textPrimary: '#2D3748',
+    textSecondary: '#4A5568'
+  };
+
   const handleCardClick = (value) => {
     dispatch(setLoanType(value));
   };
 
   const handleNextClick = () => {
-    if (loanType === 'Graduation') {
-      navigate('/GraduationLoanCriteria');
-    } else if (loanType === 'Foreign') {
-      navigate('/ForeignStudiesCriteria');
-    } else if (loanType === 'R & D') {
-      navigate('/RDLoanCriteria');
-    }
-  };
-
-  const handleBackClick = () => {
-    navigate('/WelcomeScreen');
+    if (loanType === 'Graduation') navigate('/GraduationLoanCriteria');
+    else if (loanType === 'Foreign') navigate('/ForeignStudiesCriteria');
+    else if (loanType === 'R & D') navigate('/RDLoanCriteria');
   };
 
   const loanTypes = [
-    { value: 'Graduation', title: 'Graduation Loans', description: 'Click to view the eligibility criteria' },
-    { value: 'Foreign', title: 'Foreign Studies', description: 'Click to view the eligibility criteria' },
-    { value: 'R & D', title: 'R & D', description: 'Click to view the eligibility criteria' },
+    { 
+      value: 'Graduation', 
+      title: 'Graduation Loan', 
+      description: 'Finance your undergraduate or postgraduate studies',
+      icon: <School fontSize="large" />
+    },
+    { 
+      value: 'Foreign', 
+      title: 'Foreign Education', 
+      description: 'Fund your overseas education and living expenses',
+      icon: <Language fontSize="large" />
+    },
+    { 
+      value: 'R & D', 
+      title: 'Research & Development', 
+      description: 'Support for innovative research projects',
+      icon: <Science fontSize="large" />
+    },
   ];
 
-  const containerVariants = {
-    hidden: { opacity: 0, scale: 0.95 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 0.6 } },
-  };
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-  };
-
   return (
-    <Container
-      component="main"
-      maxWidth={false}
-      disableGutters
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-        padding: 4,
-        position: 'relative',
-        overflow: 'hidden',
-      }}
-    >
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={containerVariants}
-        style={{
-          width: '100%',
-          maxWidth: '1200px',
-          padding: '16px',
-          borderRadius: '16px',
-          backgroundColor: 'rgba(255, 255, 255, 0.03)',
-          backdropFilter: 'blur(16px)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          boxShadow: '0 24px 48px rgba(0, 0, 0, 0.2)',
-          textAlign: 'center',
-        }}
-      >
-        <Typography
-          component="h1"
-          variant={isMobile ? 'h4' : 'h2'}
-          sx={{
-            fontWeight: 800,
-            mb: 3,
-            background: 'linear-gradient(45deg, #38bdf8 0%, #818cf8 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            lineHeight: 1.2,
-          }}
-        >
-          Select Loan Type
-        </Typography>
-        <Typography
-          component="p"
-          variant="body1"
-          sx={{
-            color: 'rgba(255, 255, 255, 0.85)',
-            fontSize: isMobile ? '1rem' : '1.1rem',
+    <Box sx={{ 
+      minHeight: '100vh',
+      backgroundColor: colors.background,
+      position: 'relative',
+      overflow: 'hidden'
+    }}>
+      <Container maxWidth="xl" sx={{ py: isMobile ? 4 : 8, px: isMobile ? 2 : 4 }}>
+        <IconButton 
+          onClick={() => navigate("/WelcomeScreen")}
+          sx={{ 
             mb: 4,
-            lineHeight: 1.7,
+            color: colors.textPrimary,
+            '&:hover': { backgroundColor: 'rgba(42, 75, 140, 0.04)' }
           }}
         >
-          Choose from the available loan types that best suit your academic goals.
-        </Typography>
+          <ArrowBackIosNew />
+        </IconButton>
+
+        {/* Main Content */}
+        <Box textAlign={isMobile ? 'center' : 'left'} mb={8}>
+          <Typography variant="h1" sx={{ 
+            fontWeight: 800,
+            color: colors.primary,
+            fontSize: isMobile ? '2rem' : '2.5rem',
+            mb: 2
+          }}>
+            Select Your Education Loan Type
+          </Typography>
+          <Typography variant="h6" sx={{ 
+            color: colors.textSecondary,
+            fontSize: isMobile ? '1rem' : '1.25rem',
+            maxWidth: '600px',
+            mx: isMobile ? 'auto' : 'unset'
+          }}>
+            Choose the loan option that best matches your academic requirements
+          </Typography>
+        </Box>
+
+        {/* Loan Cards Grid */}
         <Grid container spacing={4} justifyContent="center">
-          {loanTypes.map((loan, index) => (
-            <Grid item xs={12} sm={6} md={4} key={loan.value}>
-              <motion.div
-                variants={cardVariants}
-                initial="hidden"
-                animate="visible"
-                custom={index}
-              >
+          {loanTypes.map((loan) => (
+            <Grid item xs={12} sm={6} lg={4} key={loan.value}>
+              <motion.div whileHover={{ y: -8 }}>
                 <Card
+                  onClick={() => handleCardClick(loan.value)}
                   sx={{
                     height: '100%',
                     cursor: 'pointer',
-                    background: 'rgba(255, 255, 255, 0.03)',
-                    backdropFilter: 'blur(16px)',
-                    border: loanType === loan.value ? '2px solid #38bdf8' : '1px solid rgba(255, 255, 255, 0.1)',
                     borderRadius: '16px',
-                    boxShadow: '0 12px 24px rgba(0, 0, 0, 0.2)',
-                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                    border: `2px solid ${loanType === loan.value ? colors.primary : '#e2e8f0'}`,
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    backgroundColor: '#ffffff',
                     '&:hover': {
-                      transform: 'scale(1.05)',
-                      boxShadow: '0 16px 32px rgba(0, 0, 0, 0.3)',
-                    },
+                      boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+                      borderColor: colors.primary
+                    }
                   }}
-                  onClick={() => handleCardClick(loan.value)}
                 >
-                  <CardContent>
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        fontWeight: 'bold',
-                        background: 'linear-gradient(45deg, #38bdf8 0%, #818cf8 100%)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        mb: 1,
-                      }}
-                    >
+                  <CardContent sx={{ p: 4 }}>
+                    <Box sx={{ 
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      mb: 3
+                    }}>
+                      <Avatar sx={{ 
+                        bgcolor: '#dbeafe', 
+                        color: colors.primary, 
+                        width: 56, 
+                        height: 56 
+                      }}>
+                        {loan.icon}
+                      </Avatar>
+                      {loanType === loan.value && (
+                        <CheckCircle sx={{ color: colors.primary, fontSize: '2rem' }} />
+                      )}
+                    </Box>
+                    
+                    <Typography variant="h5" sx={{ 
+                      fontWeight: 700,
+                      color: colors.textPrimary,
+                      mb: 1.5
+                    }}>
                       {loan.title}
                     </Typography>
-                    <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.85)' }}>
+                    
+                    <Typography variant="body1" sx={{ 
+                      color: colors.textSecondary,
+                      lineHeight: 1.6,
+                      fontSize: '1rem'
+                    }}>
                       {loan.description}
                     </Typography>
                   </CardContent>
@@ -162,54 +169,61 @@ const LoanTypeSelection = () => {
             </Grid>
           ))}
         </Grid>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
+
+        {/* Action Buttons */}
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'flex-end', 
+          mt: 8,
+          gap: 2
+        }}>
           <Button
             variant="outlined"
-            onClick={handleBackClick}
+            onClick={() => navigate("/WelcomeScreen")}
             sx={{
+              px: 6,
               py: 2,
-              px: 4,
-              borderRadius: '50px',
-              background: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              color: 'rgba(255, 255, 255, 0.85)',
-              fontSize: '1.1rem',
+              borderRadius: '8px',
+              borderColor: '#cbd5e1',
+              color: colors.textSecondary,
+              fontSize: '1rem',
               fontWeight: 600,
-              textTransform: 'none',
-              transition: 'all 0.3s ease',
               '&:hover': {
-                background: 'rgba(255, 255, 255, 0.2)',
-                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
-              },
+                backgroundColor: '#f1f5f9',
+                borderColor: '#94a3b8'
+              }
             }}
           >
             Back
           </Button>
+          
           <Button
             variant="contained"
             onClick={handleNextClick}
             disabled={!loanType}
             sx={{
+              px: 6,
               py: 2,
-              px: 4,
-              borderRadius: '50px',
-              background: loanType
-                ? 'linear-gradient(45deg, #4f46e5 0%, #6366f1 100%)'
-                : 'rgba(255, 255, 255, 0.1)',
-              fontSize: '1.1rem',
+              borderRadius: '8px',
+              fontSize: '1rem',
               fontWeight: 600,
-              textTransform: 'none',
-              transition: 'all 0.3s ease',
+              backgroundColor: colors.primary,
+              color: 'white',
               '&:hover': {
-                boxShadow: loanType ? '0 8px 24px rgba(79, 70, 229, 0.4)' : 'none',
+                backgroundColor: '#1d4ed8',
+                boxShadow: '0 4px 6px -1px rgba(37, 99, 235, 0.2)'
               },
+              '&.Mui-disabled': {
+                backgroundColor: '#e2e8f0',
+                color: '#94a3b8'
+              }
             }}
           >
-            Next
+            Continue
           </Button>
         </Box>
-      </motion.div>
-    </Container>
+      </Container>
+    </Box>
   );
 };
 

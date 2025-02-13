@@ -1,13 +1,38 @@
 import { useState, useEffect } from 'react';
-import { Button, Typography, Container, Box, TextField, Grid, MenuItem, Select, FormControl, InputLabel, FormHelperText } from '@mui/material';
+import { 
+  Button, 
+  Typography, 
+  Container, 
+  Box, 
+  TextField, 
+  Grid,
+  Card,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
+  FormHelperText,
+  useTheme,
+  useMediaQuery
+} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setFinancialProfile } from '../Redux/FinancialProfileSlice';
-import { motion } from 'framer-motion';
+import { ArrowBack } from '@mui/icons-material';
+
+const colors = {
+  primary: '#2A4B8C',
+  secondary: '#E53E3E',
+  background: '#F7FAFC',
+  textPrimary: '#2D3748',
+  textSecondary: '#4A5568'
+};
 
 const FinancialProfile = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const storedProfileData = useSelector((state) => state.FinancialProfileform);
 
   const [formFinancialData, setFormFinancialData] = useState({
@@ -19,7 +44,6 @@ const FinancialProfile = () => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    // Prepopulate form with stored data if available
     setFormFinancialData({
       income: storedProfileData.income || '',
       employment: storedProfileData.employment || '',
@@ -29,10 +53,8 @@ const FinancialProfile = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormFinancialData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+    setFormFinancialData(prev => ({ ...prev, [name]: value }));
+    setErrors(prev => ({ ...prev, [name]: '' }));
   };
 
   const validate = () => {
@@ -68,118 +90,59 @@ const FinancialProfile = () => {
   };
 
   return (
-    <Container
-      component="main"
-      maxWidth={false}
-      disableGutters
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'linear-gradient(135deg, #0f172a, #1e293b)',
-        padding: 4,
-        position: 'relative',
-        overflow: 'hidden',
-      }}
-    >
-      {/* Animated background elements */}
-      <Box
-        sx={{
-          position: 'absolute',
-          width: '100%',
-          height: '100%',
-          background: `linear-gradient(45deg, rgba(79, 70, 229, 0.2) 0%, rgba(99, 102, 241, 0.2) 100%)`,
-          opacity: 0.05,
-          animation: 'pulse 20s ease infinite',
-          '@keyframes pulse': {
-            '0%, 100%': { transform: 'scale(1)' },
-            '50%': { transform: 'scale(1.05)' }
-          }
-        }}
-      />
-
-      {/* Floating gradient circles */}
-      <Box
-        sx={{
-          position: 'absolute',
-          top: '10%',
-          left: '5%',
-          width: '200px',
-          height: '200px',
-          background: 'radial-gradient(circle, rgba(79, 70, 229, 0.2) 0%, transparent 70%)',
-          borderRadius: '50%',
-          animation: 'float 6s ease-in-out infinite',
-          '@keyframes float': {
-            '0%, 100%': { transform: 'translateY(0)' },
-            '50%': { transform: 'translateY(-20px)' }
-          }
-        }}
-      />
-      <Box
-        sx={{
-          position: 'absolute',
-          bottom: '10%',
-          right: '5%',
-          width: '300px',
-          height: '300px',
-          background: 'radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, transparent 70%)',
-          borderRadius: '50%',
-          animation: 'float 8s ease-in-out infinite',
-          '@keyframes float': {
-            '0%, 100%': { transform: 'translateY(0)' },
-            '50%': { transform: 'translateY(-20px)' }
-          }
-        }}
-      />
-
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: 'easeOut' }}
-      >
-        <Box
+    <Box sx={{
+      minHeight: '100vh',
+      backgroundColor: colors.background,
+      position: 'relative',
+      overflow: 'hidden'
+    }}>
+      <Container maxWidth="xl" sx={{ py: isMobile ? 4 : 8, px: isMobile ? 2 : 4 }}>
+        <Button
+          startIcon={<ArrowBack />}
+          onClick={handleBackClick}
           sx={{
-            backgroundColor: 'rgba(255, 255, 255, 0.03)',
-            backdropFilter: 'blur(16px)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            padding: { xs: 3, sm: 4 },
-            borderRadius: 4,
-            boxShadow: '0 24px 48px rgba(0, 0, 0, 0.2)',
-            textAlign: 'center',
-            width: '100%',
-            maxWidth: '600px',
-            transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-            '&:hover': {
-              transform: 'translateY(-10px)',
-              boxShadow: '0 32px 64px rgba(0, 0, 0, 0.3)',
-            },
+            mb: 4,
+            color: colors.primary,
+            '&:hover': { backgroundColor: 'rgba(42, 75, 140, 0.04)' }
           }}
         >
-          <Typography
-            component="h1"
-            variant={window.innerWidth < 600 ? 'h4' : 'h3'}
-            sx={{
-              fontWeight: 800,
-              mb: 3,
-              background: 'linear-gradient(45deg, #38bdf8, #818cf8)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              lineHeight: 1.2,
-            }}
-          >
+          Back
+        </Button>
+
+        <Card sx={{
+          borderRadius: 4,
+          boxShadow: '0 16px 32px rgba(42, 75, 140, 0.1)',
+          p: { xs: 3, sm: 4, md: 6 },
+          position: 'relative',
+          overflow: 'visible',
+          '&:before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '6px',
+            background: `linear-gradient(90deg, ${colors.primary}, ${colors.secondary})`,
+            borderRadius: '4px 4px 0 0'
+          }
+        }}>
+          <Typography variant="h3" sx={{
+            fontWeight: 700,
+            color: colors.primary,
+            mb: 4,
+            fontSize: isMobile ? '1.8rem' : '2.2rem'
+          }}>
             Financial Profile
           </Typography>
 
-          <Grid container spacing={4}>
-            {/* Household Income Field */}
-            <Grid item xs={12}>
+          <Grid container spacing={3}>
+            {/* Household Income */}
+            <Grid item xs={12} md={6}>
               <TextField
-                name="income"
-                label="Household Income"
-                placeholder="Enter your total household income (e.g., 50000)"
-                variant="outlined"
                 fullWidth
+                label="Household Income"
+                variant="outlined"
+                name="income"
                 value={formFinancialData.income}
                 onChange={handleChange}
                 error={!!errors.income}
@@ -187,24 +150,25 @@ const FinancialProfile = () => {
                 type="number"
                 sx={{
                   '& .MuiOutlinedInput-root': {
-                    borderRadius: '10px',
-                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                  },
-                  '& .MuiInputLabel-root': {
-                    color: 'rgba(255, 255, 255, 0.7)',
+                    borderRadius: '8px',
+                    '& fieldset': { borderColor: '#E2E8F0' },
+                    '&:hover fieldset': { borderColor: colors.primary },
+                    '&.Mui-focused fieldset': { borderColor: colors.primary },
                   },
                   '& .MuiInputBase-input': {
-                    color: 'rgba(255, 255, 255, 0.9)',
+                    color: colors.textPrimary,
                   },
+                  '& .MuiInputLabel-root': {
+                    color: colors.textSecondary,
+                  }
                 }}
               />
             </Grid>
 
-            {/* Employment Status Field */}
-            <Grid item xs={12}>
+            {/* Employment Status */}
+            <Grid item xs={12} md={6}>
               <FormControl fullWidth error={!!errors.employment}>
-                <InputLabel sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>Employment Status</InputLabel>
+                <InputLabel sx={{ color: colors.textSecondary }}>Employment Status</InputLabel>
                 <Select
                   name="employment"
                   value={formFinancialData.employment}
@@ -213,115 +177,117 @@ const FinancialProfile = () => {
                   sx={{
                     textAlign: 'left',
                     '& .MuiOutlinedInput-root': {
-                      borderRadius: '10px',
-                      backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '8px',
+                      '& fieldset': { borderColor: '#E2E8F0' },
+                      '&:hover fieldset': { borderColor: colors.primary },
+                      '&.Mui-focused fieldset': { borderColor: colors.primary },
                     },
-                    '& .MuiSelect-icon': {
-                      color: 'rgba(255, 255, 255, 0.7)',
-                    },
+                    '& .MuiSelect-select': {
+                      color: colors.textPrimary,
+                    }
                   }}
                   MenuProps={{
                     PaperProps: {
                       sx: {
-                        backgroundColor: '#1e293b',
-                        color: 'rgba(255, 255, 255, 0.9)',
-                      },
-                    },
+                        backgroundColor: colors.background,
+                        '& .MuiMenuItem-root': {
+                          color: colors.textPrimary,
+                          '&:hover': {
+                            backgroundColor: 'rgba(42, 75, 140, 0.1)'
+                          }
+                        }
+                      }
+                    }
                   }}
                 >
                   <MenuItem value="Student">Student</MenuItem>
                   <MenuItem value="Employed">Employed</MenuItem>
                   <MenuItem value="Unemployed">Unemployed</MenuItem>
                 </Select>
-                {errors.employment && <FormHelperText sx={{ color: '#ff4081' }}>{errors.employment}</FormHelperText>}
+                {errors.employment && 
+                  <FormHelperText sx={{ color: colors.secondary }}>
+                    {errors.employment}
+                  </FormHelperText>}
               </FormControl>
             </Grid>
 
-            {/* Financial Info Field */}
+            {/* Financial Information */}
             <Grid item xs={12}>
               <TextField
-                name="financialInfo"
-                label="Other Financial Information"
-                placeholder="Provide details such as savings, investments, or debts"
-                variant="outlined"
                 fullWidth
+                label="Other Financial Information"
+                variant="outlined"
+                name="financialInfo"
                 value={formFinancialData.financialInfo}
                 onChange={handleChange}
                 error={!!errors.financialInfo}
                 helperText={errors.financialInfo}
+                multiline
+                rows={4}
                 sx={{
                   '& .MuiOutlinedInput-root': {
-                    borderRadius: '10px',
-                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                  },
-                  '& .MuiInputLabel-root': {
-                    color: 'rgba(255, 255, 255, 0.7)',
+                    borderRadius: '8px',
+                    '& fieldset': { borderColor: '#E2E8F0' },
+                    '&:hover fieldset': { borderColor: colors.primary },
+                    '&.Mui-focused fieldset': { borderColor: colors.primary },
                   },
                   '& .MuiInputBase-input': {
-                    color: 'rgba(255, 255, 255, 0.9)',
+                    color: colors.textPrimary,
                   },
+                  '& .MuiInputLabel-root': {
+                    color: colors.textSecondary,
+                  }
                 }}
               />
             </Grid>
           </Grid>
 
-          {/* Action Buttons */}
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              width: '100%',
-              mt: 4,
-            }}
-          >
+          <Box sx={{
+            display: 'flex',
+            gap: 3,
+            flexDirection: { xs: 'column', sm: 'row' },
+            mt: 6
+          }}>
             <Button
+              fullWidth
               variant="outlined"
               onClick={handleBackClick}
               sx={{
-                py: 2,
-                px: 4,
-                borderRadius: '50px',
-                background: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                color: 'rgba(255, 255, 255, 0.85)',
-                fontSize: '1.1rem',
+                py: 1.5,
+                borderRadius: '8px',
+                borderColor: colors.primary,
+                color: colors.primary,
                 fontWeight: 600,
-                textTransform: 'none',
-                transition: 'all 0.3s ease',
                 '&:hover': {
-                  background: 'rgba(255, 255, 255, 0.2)',
-                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
-                },
+                  backgroundColor: 'rgba(42, 75, 140, 0.05)'
+                }
               }}
             >
-              Back
+              Previous Step
             </Button>
-
+            
             <Button
+              fullWidth
               variant="contained"
               onClick={handleNextClick}
               sx={{
-                py: 2,
-                px: 4,
-                borderRadius: '50px',
-                background: 'linear-gradient(45deg, #4f46e5, #6366f1)',
-                fontSize: '1.1rem',
+                py: 1.5,
+                borderRadius: '8px',
+                background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`,
+                color: 'white',
                 fontWeight: 600,
-                textTransform: 'none',
-                transition: 'all 0.3s ease',
+                boxShadow: '0 4px 6px rgba(42, 75, 140, 0.1)',
                 '&:hover': {
-                  boxShadow: '0 8px 24px rgba(79, 70, 229, 0.4)',
-                },
+                  boxShadow: '0 6px 12px rgba(42, 75, 140, 0.2)'
+                }
               }}
             >
-              Next
+              Continue Application
             </Button>
           </Box>
-        </Box>
-      </motion.div>
-    </Container>
+        </Card>
+      </Container>
+    </Box>
   );
 };
 

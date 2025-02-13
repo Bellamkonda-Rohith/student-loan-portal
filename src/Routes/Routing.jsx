@@ -9,10 +9,12 @@ import EducationalProfile from '../components/EducationalProfile';
 import FinancialProfile from '../components/FinancialProfile';
 import DecisionScreen from '../components/DecisionScreen';
 import AdminDashboard from '../components/AdminDashboard';
-
+import NavBar from '../components/Navbar';
+import Footer from '../components/Footer';
 function Routing() {
   return (
     <Router>
+      <NavBar/>
       <Routes>
         <Route path="/" element={<WelcomeScreen />} />
         <Route path="/WelcomeScreen" element={<WelcomeScreen />} />
@@ -27,6 +29,7 @@ function Routing() {
         <Route path="/DecisionScreen" element={<DecisionScreen />} />
         <Route path="/AdminDashboard" element={<AdminDashboard />} />
       </Routes>
+      <Footer/>
     </Router>
   );
 }
