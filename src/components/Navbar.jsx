@@ -191,7 +191,7 @@ const NavBar = () => {
             <Divider orientation="vertical" flexItem sx={{ borderColor: 'rgba(255,255,255,0.2)', mx: 2 }} />
             <Button
               component={Link}
-              to="/admin-dashboard"
+              to="/AdminDashboard"
               variant="contained"
               sx={{
                 background: 'linear-gradient(135deg, #00BFA5, #3A86FF)',
